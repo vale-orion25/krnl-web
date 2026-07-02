@@ -1,9 +1,9 @@
 import { useRef, useEffect, useState, type ElementType, type CSSProperties } from "react";
-import { motion, AnimatePresence, useScroll, useTransform, useInView } from "motion/react";
+import { motion, AnimatePresence, useScroll, useTransform, useInView, useReducedMotion } from "motion/react";
 import {
   ArrowRight, ChevronRight, Scale, BrainCircuit, Box, Database, Lock, Users, Kanban, Workflow,
   Shield, CheckCircle2, FileText, Activity, Eye, EyeOff, ShieldOff, AlertTriangle,
-  TrendingUp, Boxes, Link2,
+  TrendingUp, Boxes, Link2, Menu, X,
 } from "lucide-react";
 import { ImageWithFallback } from "@/app/components/figma/ImageWithFallback";
 import krnlLogo      from "@/imports/krnl-logo-dark.png";
@@ -16,9 +16,10 @@ import PaginaGobierno from "./Gobierno";
 import PaginaContacto from "./Contacto";
 import PaginaInsightsIA from "./InsightsIA";
 import KrnlFooter from "./KrnlFooter";
+import MobileTabletHero from "./MobileTabletHero";
 
 // ── Brand tokens ──────────────────────────────────────────────────────────────
-const B = {
+export const B = {
   purple:      "#6D2BFF",
   magenta:     "#D4009A",
   text:        "#0D1524",
@@ -33,8 +34,8 @@ const B = {
   warn:        "#DC2626",
   warnSoft:    "#FEF2F2",
 };
-const GRAD = `linear-gradient(135deg, ${B.magenta} 0%, ${B.purple} 100%)`;
-const MONO = { fontFamily: "'JetBrains Mono', monospace" };
+export const GRAD = `linear-gradient(135deg, ${B.magenta} 0%, ${B.purple} 100%)`;
+export const MONO = { fontFamily: "'JetBrains Mono', monospace" };
 
 // ── Narrative steps ───────────────────────────────────────────────────────────
 const STEP_CONTENT = [
@@ -372,12 +373,14 @@ function AtmosphereBg() {
 }
 
 export default function App() {
+  const prefersReducedMotion = useReducedMotion();
   const scrollRef = useRef<HTMLDivElement>(null);
   const [bounds, setBounds]       = useState({ start: 0, end: 4000 });
   const [step, setStep]           = useState(0);
   const [activeNav, setActiveNav] = useState("Inicio");
   const [scrolled, setScrolled]  = useState(false);
   const [page, setPage]           = useState<"home" | "producto" | "independencia" | "shadowai" | "gobierno" | "contacto" | "insights">("home");
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     const measure = () => {
@@ -398,10 +401,15 @@ export default function App() {
   }, []);
 
   useEffect(() => {
+    document.body.style.overflow = mobileMenuOpen ? 'hidden' : '';
+    return () => { document.body.style.overflow = ''; };
+  }, [mobileMenuOpen]);
+
+  useEffect(() => {
     const PAGE_TO_NAV: Record<string, string> = {
       producto: "Producto", independencia: "Soberanía IA",
       shadowai: "Riesgos",  gobierno: "Gobierno",
-      contacto: "Contacto", insights: "",
+      contacto: "", insights: "Casos de uso",
     };
     const handler = (e: Event) => {
       const dest = (e as CustomEvent<string>).detail;
@@ -442,7 +450,7 @@ export default function App() {
   const isRisk = pan.tone === "risk";
 
   return (
-    <div className="min-h-screen" style={{
+    <div className="min-h-screen overflow-x-clip" style={{
       fontFamily: "'Inter', system-ui, sans-serif",
       background: `radial-gradient(120% 90% at 50% 0%, #FEFAFC 0%, #FAF5FB 50%, #F6F0FC 100%)`,
     }}>
@@ -456,7 +464,7 @@ export default function App() {
           borderBottom: `1px solid ${scrolled ? "rgba(231,225,236,0.55)" : B.border}`,
           boxShadow: scrolled ? "0 1px 24px rgba(109,43,255,0.06)" : "none",
         }}>
-        <div className="grid h-[64px] max-w-[1200px] mx-auto px-6 md:px-10"
+        <div className="grid max-md:flex max-md:justify-between max-md:items-center h-[64px] max-w-[1200px] mx-auto px-6 md:px-10"
           style={{ gridTemplateColumns: "1fr auto 1fr" }}>
           {/* Logo — left */}
           <div className="flex items-center">
@@ -466,11 +474,11 @@ export default function App() {
           </div>
           {/* Menu — true center */}
           <div className="hidden md:flex items-center gap-1">
-            {["Inicio", "Riesgos", "Producto", "Soberanía IA", "Gobierno", "Contacto"].map((item) => {
+            {["Inicio", "Riesgos", "Producto", "Gobierno", "Soberanía IA", "Casos de uso"].map((item) => {
               const isActive = activeNav === item;
               return (
                 <a key={item} href="#"
-                  onClick={(e) => { e.preventDefault(); setActiveNav(item); setPage(item === "Producto" ? "producto" : item === "Soberanía IA" ? "independencia" : item === "Riesgos" ? "shadowai" : item === "Gobierno" ? "gobierno" : item === "Contacto" ? "contacto" : "home"); window.scrollTo({ top: 0 }); }}
+                  onClick={(e) => { e.preventDefault(); setActiveNav(item); setPage(item === "Producto" ? "producto" : item === "Soberanía IA" ? "independencia" : item === "Riesgos" ? "shadowai" : item === "Gobierno" ? "gobierno" : item === "Casos de uso" ? "insights" : "home"); window.scrollTo({ top: 0 }); }}
                   className="px-4 py-2 text-[14px] rounded-full transition-all duration-200"
                   style={{ color: isActive ? B.magenta : B.textSub, background: isActive ? B.magentaSoft : "transparent", fontWeight: isActive ? 500 : 400 }}
                   onMouseEnter={(e) => { e.currentTarget.style.color = B.magenta; e.currentTarget.style.background = B.magentaSoft; }}
@@ -481,14 +489,58 @@ export default function App() {
             })}
           </div>
           {/* CTA — right */}
-          <div className="hidden md:flex items-center justify-end">
-            <button className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-full text-[14px] font-[600] text-white transition-all hover:scale-[1.02] active:scale-[0.98]"
+          <div className="flex items-center justify-end">
+            <button
+              className="hidden md:inline-flex items-center gap-1.5 px-5 py-2.5 rounded-full text-[14px] font-[600] text-white transition-all hover:scale-[1.02] active:scale-[0.98]"
               style={{ background: GRAD, boxShadow: `0 4px 16px ${B.purple}40` }}
-              onClick={() => { setActiveNav("Contacto"); setPage("contacto"); window.scrollTo({ top: 0 }); }}>
+              onClick={() => { setActiveNav(""); setPage("contacto"); window.scrollTo({ top: 0 }); }}>
               Conoce KRNL <ArrowRight className="w-4 h-4" />
+            </button>
+            <button
+              className="md:hidden flex items-center justify-center w-11 h-11 rounded-lg"
+              style={{ color: "#5B657A" }}
+              onClick={() => setMobileMenuOpen(v => !v)}
+              aria-label={mobileMenuOpen ? "Cerrar menú" : "Abrir menú"}
+              aria-expanded={mobileMenuOpen}>
+              {mobileMenuOpen
+                ? <X className="w-5 h-5" />
+                : <Menu className="w-5 h-5" />}
             </button>
           </div>
         </div>
+        {/* Mobile menu dropdown */}
+        {mobileMenuOpen && (
+          <div className="md:hidden absolute top-full left-0 right-0 z-50"
+            style={{ background: "rgba(255,255,255,0.98)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", borderBottom: `1px solid ${B.border}`, boxShadow: "0 8px 24px rgba(0,0,0,0.08)" }}>
+            <div className="px-6 py-4 flex flex-col gap-1">
+              {["Inicio","Riesgos","Producto","Gobierno","Soberanía IA","Casos de uso"].map((item) => {
+                const isActive = activeNav === item;
+                return (
+                  <a key={item} href="#"
+                    className="px-4 py-3 text-[15px] rounded-xl transition-all duration-200"
+                    style={{ color: isActive ? B.magenta : "#5B657A", background: isActive ? "#FDE8F6" : "transparent", fontWeight: isActive ? 600 : 400, display: "block", minHeight: 44 }}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setMobileMenuOpen(false);
+                      setActiveNav(item);
+                      setPage(item === "Producto" ? "producto" : item === "Soberanía IA" ? "independencia" : item === "Riesgos" ? "shadowai" : item === "Gobierno" ? "gobierno" : item === "Casos de uso" ? "insights" : "home");
+                      window.scrollTo({ top: 0 });
+                    }}>
+                    {item}
+                  </a>
+                );
+              })}
+              <div className="mt-3 pt-3" style={{ borderTop: `1px solid ${B.border}` }}>
+                <button
+                  className="w-full inline-flex items-center justify-center gap-2 px-5 py-3 rounded-full text-[15px] font-[600] text-white"
+                  style={{ background: GRAD, boxShadow: `0 4px 16px ${B.purple}40`, minHeight: 44 }}
+                  onClick={() => { setMobileMenuOpen(false); setActiveNav(""); setPage("contacto"); window.scrollTo({ top: 0 }); }}>
+                  Conoce KRNL <ArrowRight className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </nav>
 
       {page === "producto" && <PaginaProducto />}
@@ -499,6 +551,13 @@ export default function App() {
       {page === "insights" && <PaginaInsightsIA />}
 
       {page === "home" && <>
+      {/* ── Mobile/tablet hero — replaces the scroll-jacking desktop hero below lg ── */}
+      <MobileTabletHero
+        onCTAClick={() => { setActiveNav(""); setPage("contacto"); window.scrollTo({ top: 0 }); }}
+      />
+
+      {/* ── Desktop hero (scroll story) — lg and up only ─────────────────────── */}
+      <div className="hidden lg:block">
       <motion.div className="fixed top-0 left-0 h-[2px] z-50" style={{ width: progressW, background: GRAD }} />
 
       {/* ── Scroll story ──────────────────────────────────────────────────── */}
@@ -677,8 +736,8 @@ export default function App() {
               </svg>
               <AnimatePresence mode="wait">
                 <motion.div key={step}
-                  initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}
-                  transition={{ duration: 0.35 }}>
+                  initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, y: -6 }}
+                  transition={{ duration: 0.18, ease: "easeOut" }}>
                   <h3 className="text-[16px] font-[800]" style={{ color: "#0F1F4A" }}>{pan.title}</h3>
                   <p className="text-[12px] mb-4 mt-0.5" style={{ color: "#98A2B3" }}>{pan.sub}</p>
                   <div className="flex flex-col gap-4">
@@ -687,7 +746,17 @@ export default function App() {
                         ? { color: B.warn }
                         : { stroke: "url(#krnlPanelGrad)", color: "transparent" };
                       return (
-                        <div key={i} className="flex items-start gap-3">
+                        <motion.div
+                          key={i}
+                          className="flex items-start gap-3"
+                          initial={prefersReducedMotion ? false : { opacity: 0, y: 7 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{
+                            duration: 0.52,
+                            delay: prefersReducedMotion ? 0 : 0.10 + i * 0.40,
+                            ease: [0.2, 0, 0.2, 1],
+                          }}
+                        >
                           <it.Icon
                             className="w-[18px] h-[18px] shrink-0 mt-[3px]"
                             style={iconStyle}
@@ -697,7 +766,7 @@ export default function App() {
                             <p className="text-[13.5px] font-[800] leading-tight" style={{ color: isRisk ? B.warn : "#1C2B57" }}>{it.t}</p>
                             <p className="text-[11.5px] leading-snug mt-1" style={{ color: "#98A2B3" }}>{it.d}</p>
                           </div>
-                        </div>
+                        </motion.div>
                       );
                     })}
                   </div>
@@ -744,6 +813,7 @@ export default function App() {
           </div>
 
         </div>
+      </div>
       </div>
 
       {/* ── Home sections ─────────────────────────────────────────────────── */}
@@ -924,8 +994,8 @@ function SectionQueEs() {
       {/* Corner blobs */}
       <div className="absolute -top-24 -right-24 w-96 h-96 rounded-full pointer-events-none" style={{ background: `radial-gradient(circle, ${B.purpleSoft} 0%, transparent 68%)`, opacity: 0.65 }} />
       <div className="absolute -bottom-16 -left-16 w-64 h-64 rounded-full pointer-events-none" style={{ background: `radial-gradient(circle, ${B.magentaSoft} 0%, transparent 70%)`, opacity: 0.4 }} />
-      <div className="relative z-10 max-w-[1200px] mx-auto px-10 py-28">
-        <div className="grid grid-cols-2 gap-24 items-center">
+      <div className="relative z-10 max-w-[1200px] mx-auto px-5 md:px-10 py-16 md:py-28">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-24 items-center">
           <div>
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: inV ? 1 : 0 }}
               transition={{ duration: 0.6 }}>
@@ -1008,7 +1078,7 @@ function SectionParaQuien() {
       </div>
       {/* ─────────────────────────────────────────────────────────────────── */}
 
-      <div className="max-w-[1200px] mx-auto px-10 py-28" style={{ position: "relative", zIndex: 10 }}>
+      <div className="max-w-[1200px] mx-auto px-5 md:px-10 py-16 md:py-28" style={{ position: "relative", zIndex: 10 }}>
         <motion.div style={{ maxWidth: 520, marginBottom: 72 }}
           initial={{ opacity: 0, y: 14 }} animate={inV ? { opacity: 1, y: 0 } : { opacity: 0, y: 14 }}
           transition={{ duration: 0.72, ease }}>
@@ -1026,7 +1096,7 @@ function SectionParaQuien() {
             </linearGradient>
           </defs>
         </svg>
-        <div className="grid grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
           {profiles.map(({ Icon, role, desc }, i) => (
             <motion.div key={role}
               className="relative overflow-hidden"
@@ -1083,7 +1153,7 @@ function SectionBeneficios() {
   );
   return (
     <section ref={sRef} style={{ background: B.surface, borderTop: `1px solid ${B.border}` }}>
-      <div className="max-w-[1200px] mx-auto px-10 py-28">
+      <div className="max-w-[1200px] mx-auto px-5 md:px-10 py-16 md:py-28">
         {/* Header centrado */}
         <motion.div style={{ textAlign: "center", maxWidth: 520, margin: "0 auto 64px" }}
           initial={{ opacity: 0, y: 14 }} animate={inV ? { opacity: 1, y: 0 } : { opacity: 0, y: 14 }}
@@ -1097,7 +1167,7 @@ function SectionBeneficios() {
           </p>
         </motion.div>
         {/* Beneficios: 2 columnas iguales */}
-        <div className="grid grid-cols-2 gap-x-14">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-14">
           <div>
             {benefits.slice(0, 3).map((b, i) => renderBenefit(b, i))}
             <div style={{ borderTop: `1px solid ${B.border}` }} />
@@ -1199,8 +1269,8 @@ function SectionAutonomia() {
           <circle cx="85"   cy="545" r="1.6" fill="#D4009A" opacity="0.06" />
         </svg>
       </div>
-      <div className="max-w-[1200px] mx-auto px-10 py-28" style={{ position: "relative", zIndex: 1 }}>
-        <div className="grid items-center" style={{ gridTemplateColumns: "1fr 1.3fr", gap: "4rem" }}>
+      <div className="max-w-[1200px] mx-auto px-5 md:px-10 py-16 md:py-28" style={{ position: "relative", zIndex: 1 }}>
+        <div className="grid grid-cols-1 md:grid-cols-[1fr_1.3fr] gap-8 md:gap-16 items-center">
           <div>
             <SectionMarker label="Autonomía Operativa" />
             <h2 className="text-[38px] font-[800] leading-[1.08] mt-4 mb-6" style={{ color: B.text }}>
@@ -1251,7 +1321,7 @@ function SectionIndependencia() {
   return (
     <section ref={sRef} className="relative overflow-hidden" style={{ background: `radial-gradient(80% 80% at 50% 50%, #EEECF7 0%, ${B.softBg} 65%)` }}>
       <FlowingCurves />
-      <div className="relative z-10 max-w-[1200px] mx-auto px-10 py-36">
+      <div className="relative z-10 max-w-[1200px] mx-auto px-5 md:px-10 py-16 md:py-36">
         {/* Centered full-width headline — deliberately different from all 2-col sections */}
         <motion.div style={{ textAlign: "center", maxWidth: 680, margin: "0 auto 72px" }}
           initial={{ opacity: 0, y: 18 }} animate={inV ? { opacity: 1, y: 0 } : { opacity: 0, y: 18 }}
@@ -1273,7 +1343,7 @@ function SectionIndependencia() {
             </linearGradient>
           </defs>
         </svg>
-        <div className="grid grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {proofs.map(({ Icon, title, desc }, i) => (
             <motion.div key={title}
               className="relative overflow-hidden rounded-2xl p-6"
@@ -1348,7 +1418,7 @@ function SectionFlujos() {
         <path d="M 868 388 L 880 375 L 892 362" fill="none" stroke="#B020B8" strokeWidth="0.65" opacity="0.058" strokeLinejoin="round" />
       </svg>
 
-      <div className="relative z-10 max-w-[1200px] mx-auto px-10 py-28">
+      <div className="relative z-10 max-w-[1200px] mx-auto px-5 md:px-10 py-16 md:py-28">
         <div style={{ textAlign: "center", maxWidth: 580, margin: "0 auto 80px" }}>
           <SectionMarker label="Flujos Inteligentes" />
           <h2 className="text-[38px] font-[800] leading-[1.08] mt-4 mb-5" style={{ color: B.text }}>
@@ -1358,9 +1428,9 @@ function SectionFlujos() {
             Diseña, conecta y supervisa procesos con IA, integrando validación, contexto y trazabilidad en cada paso.
           </p>
         </div>
-        <div className="relative grid grid-cols-4 gap-8">
+        <div className="relative grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
           {/* Line grows left→right on scroll */}
-          <motion.div className="absolute pointer-events-none"
+          <motion.div className="absolute pointer-events-none hidden md:block"
             style={{ top: 22, left: "13%", right: "13%", height: 1, transformOrigin: "left",
               background: `linear-gradient(90deg, ${B.purple}30 0%, ${B.magenta}50 50%, ${B.purple}30 100%)` }}
             initial={{ scaleX: 0 }}
@@ -1369,7 +1439,7 @@ function SectionFlujos() {
             transition={{ duration: 1.6, delay: 0.2, ease: [0.4, 0, 0.2, 1] }}
           />
           {steps.map(({ num, Icon, title, desc }, i) => (
-            <motion.div key={num} className="relative z-10 flex flex-col items-center text-center px-4"
+            <motion.div key={num} className="relative z-10 flex flex-col items-center text-center px-2 md:px-4"
               initial={{ opacity: 0, y: 28 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-80px" }}
@@ -1469,7 +1539,7 @@ function SectionGobierno() {
       <div className="absolute -bottom-12 right-0 w-64 h-64 rounded-full pointer-events-none"
         style={{ background: `radial-gradient(circle, ${B.magenta}06 0%, transparent 70%)` }} />
 
-      <div className="relative z-10 max-w-[1200px] mx-auto px-10 py-24">
+      <div className="relative z-10 max-w-[1200px] mx-auto px-5 md:px-10 py-14 md:py-24">
 
         {/* Header */}
         <div className="max-w-[720px] mb-14">
@@ -1523,7 +1593,7 @@ function SectionGobierno() {
         </motion.div>
 
         {/* 4 indicator cards */}
-        <div className="grid grid-cols-4 gap-5 mb-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-5 mb-10">
           {indicators.map(({ Icon, title, desc, chip, chipC }, i) => (
             <motion.div key={title} className="relative overflow-hidden rounded-2xl p-5"
               style={{ background: "rgba(255,255,255,0.90)", border: `1px solid ${B.borderSoft}`, boxShadow: "0 2px 12px rgba(109,43,255,0.04)" }}
@@ -1547,7 +1617,7 @@ function SectionGobierno() {
         </div>
 
         {/* Bottom capability cards */}
-        <div className="grid grid-cols-4 gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-5">
           {[
             { Icon: Shield,       title: "Define reglas",       desc: "Configura políticas por agente, modelo, área o flujo de trabajo.",         chip: "Políticas"         },
             { Icon: CheckCircle2, title: "Valida respuestas",   desc: "Revisa salidas antes de enviarlas a usuarios o sistemas externos.",        chip: "Validación"        },
@@ -1647,7 +1717,7 @@ function SectionActivacion() {
         style={{ background: `radial-gradient(36% 44% at 88% 92%, ${B.magenta}0C 0%, transparent 58%)` }}
         animate={{ opacity: [1, 0.3, 1] }}
         transition={{ duration: 12, repeat: Infinity, ease: "easeInOut", delay: 6.5 }} />
-      <div className="relative z-10 text-center" style={{ maxWidth: 720, margin: "0 auto", padding: "120px 40px" }}>
+      <div className="relative z-10 text-center px-5 md:px-10 py-16 md:py-[120px]" style={{ maxWidth: 720, margin: "0 auto" }}>
         <span className="block mb-6 text-[11px] font-[700] tracking-[0.22em] uppercase"
           style={{ ...MONO, color: B.magenta }}>
           Activación

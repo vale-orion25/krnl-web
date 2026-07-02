@@ -1,4 +1,6 @@
-import { ArrowRight } from "lucide-react";
+import { useState } from "react";
+import { motion, AnimatePresence } from "motion/react";
+import { ArrowRight, ChevronDown } from "lucide-react";
 import { krnlNavigate } from "./navigate";
 import { ImageWithFallback } from "@/app/components/figma/ImageWithFallback";
 import krnlLogo from "@/imports/krnl-logo-dark.png";
@@ -77,10 +79,12 @@ export default function KrnlFooter() {
             {COLS.map(col => <NavColumn key={col.title} {...col} />)}
           </div>
 
-          {/* Mobile: stacked */}
+          {/* Mobile: stacked, categories collapsed into accordions */}
           <div className="flex flex-col gap-8 md:hidden">
             <BrandColumn />
-            {COLS.map(col => <NavColumn key={col.title} {...col} />)}
+            <div style={{ borderTop: `1px solid ${B.borderSoft}` }}>
+              {COLS.map(col => <NavColumnAccordion key={col.title} {...col} />)}
+            </div>
           </div>
         </div>
 
@@ -151,6 +155,61 @@ function BrandColumn() {
       >
         Conoce KRNL <ArrowRight className="w-3.5 h-3.5" strokeWidth={2} />
       </a>
+    </div>
+  );
+}
+
+function NavColumnAccordion({ title, links }: { title: string; links: { label: string; external?: boolean; action?: () => void }[] }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div style={{ borderBottom: `1px solid ${B.borderSoft}` }}>
+      <button
+        onClick={() => setOpen(v => !v)}
+        className="w-full flex items-center justify-between"
+        style={{ minHeight: 44, paddingTop: 12, paddingBottom: 12 }}
+        aria-expanded={open}
+      >
+        <span
+          className="text-[11px] font-[700] tracking-[0.2em] uppercase"
+          style={{ ...MONO, color: B.textMuted }}
+        >
+          {title}
+        </span>
+        <ChevronDown
+          className="w-4 h-4 shrink-0"
+          style={{ color: B.textMuted, transform: open ? "rotate(180deg)" : "none", transition: "transform 0.2s ease" }}
+        />
+      </button>
+      <AnimatePresence initial={false}>
+        {open && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.22, ease: "easeInOut" }}
+            style={{ overflow: "hidden" }}
+          >
+            <ul style={{ listStyle: "none", padding: 0, margin: 0 }} className="flex flex-col gap-4 pb-5">
+              {links.map(({ label, external, action }) => (
+                <li key={label}>
+                  <a
+                    href="#"
+                    className="inline-flex items-center gap-1 text-[14px] no-underline"
+                    style={{ color: B.textSub, minHeight: 24 }}
+                    onClick={e => { if (!external) { e.preventDefault(); action?.(); } }}
+                    {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+                  >
+                    {label}
+                    {external && (
+                      <span style={{ fontSize: 10, opacity: 0.55, marginLeft: 1 }}>↗</span>
+                    )}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

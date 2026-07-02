@@ -9,6 +9,7 @@ import {
 import { ImageWithFallback } from "@/app/components/figma/ImageWithFallback";
 import krnlLogo from "@/imports/krnl-logo-dark.png";
 import KrnlFooter from "./KrnlFooter";
+import { krnlNavigate } from "./navigate";
 
 // ── Brand tokens (mirror App.tsx) ─────────────────────────────────────────────
 const B = {
@@ -93,9 +94,9 @@ function HeroProducto() {
         <motion.h1 className="text-center font-[800] leading-[1.06] mb-5"
           style={{ fontSize: "clamp(30px, 4vw, 54px)", color: B.text, maxWidth: 800, margin: "0 auto 20px" }}
           initial={{ opacity: 0, y: 20 }} animate={inV ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.65, delay: 0.1, ease }}>
-          Centraliza, gobierna y opera<br />
+          La arquitectura operativa<br />
           <span style={{ background: GRAD, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
-            la IA de tu empresa
+            para tu IA empresarial
           </span>
         </motion.h1>
 
@@ -103,13 +104,14 @@ function HeroProducto() {
         <motion.p className="text-center mb-10 mx-auto"
           style={{ fontSize: 17, color: B.textSub, maxWidth: 620, lineHeight: 1.65 }}
           initial={{ opacity: 0, y: 12 }} animate={inV ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.55, delay: 0.2, ease }}>
-          KRNL conecta múltiples LLMs, agentes, automatizaciones y dashboards en una capa corporativa con soberanía, control y trazabilidad.
+          KRNL conecta LLMs, agentes, automatizaciones y dashboards en una misma capa, con los componentes listos para escalar tu operación.
         </motion.p>
 
         {/* CTAs */}
         <motion.div className="flex items-center justify-center gap-4 mb-14"
           initial={{ opacity: 0, y: 10 }} animate={inV ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5, delay: 0.3, ease }}>
-          <button className="inline-flex items-center gap-2 px-6 py-3 rounded-full font-[600] text-white text-[15px] transition-all hover:scale-[1.03] active:scale-[0.98]"
+          <button onClick={() => krnlNavigate("contacto")}
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-full font-[600] text-white text-[15px] transition-all hover:scale-[1.03] active:scale-[0.98]"
             style={{ background: GRAD, boxShadow: `0 6px 28px ${B.purple}40` }}>
             Conoce KRNL <ArrowRight className="w-4 h-4" strokeWidth={2.2} />
           </button>
@@ -435,7 +437,7 @@ function SectionArquitectura() {
             Una capa única que conecta todo
           </h2>
           <p style={{ color: B.textSub, fontSize: 16, maxWidth: 500, margin: "0 auto" }}>
-            KRNL se posiciona entre los modelos de IA y el usuario final, aplicando gobierno, seguridad y trazabilidad en cada capa.
+            KRNL se posiciona entre los modelos de IA y el usuario final, orquestando enrutamiento, contexto y ejecución en cada capa.
           </p>
         </motion.div>
 
@@ -751,12 +753,12 @@ function CTAFinal() {
         <motion.h2 className="font-[800] leading-tight mt-6 mb-5"
           style={{ fontSize: "clamp(28px, 4vw, 48px)", color: B.text }}
           initial={{ opacity: 0, y: 18 }} animate={inV ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.65, delay: 0.1, ease }}>
-          Empieza a operar IA con control empresarial
+          Construye tu arquitectura de IA empresarial
         </motion.h2>
         <motion.p className="leading-relaxed mb-10"
           style={{ fontSize: 17, color: B.textSub, maxWidth: 520, margin: "0 auto 40px" }}
           initial={{ opacity: 0, y: 12 }} animate={inV ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.55, delay: 0.2, ease }}>
-          Pasa de herramientas aisladas a una operación de IA centralizada, gobernada y trazable.
+          Deja las herramientas aisladas atrás y dale a tu IA una capa operativa lista para escalar.
         </motion.p>
         <motion.div className="flex items-center justify-center gap-4"
           initial={{ opacity: 0, y: 10 }} animate={inV ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5, delay: 0.3, ease }}>

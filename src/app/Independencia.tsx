@@ -9,6 +9,7 @@ import { ImageWithFallback } from "@/app/components/figma/ImageWithFallback";
 import krnlLogo     from "@/imports/krnl-logo-dark.png";
 import krnlIsoWhite from "@/imports/krnl-iso-white.png";
 import KrnlFooter from "./KrnlFooter";
+import { krnlNavigate } from "./navigate";
 
 // ── Brand tokens ──────────────────────────────────────────────────────────────
 const B = {
@@ -219,7 +220,8 @@ function HeroIndependencia() {
         {/* CTAs */}
         <motion.div className="flex items-center justify-center gap-4 mb-14"
           initial={{ opacity: 0, y: 10 }} animate={inV ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5, delay: 0.3, ease }}>
-          <button className="inline-flex items-center gap-2 px-6 py-3 rounded-full font-[600] text-white text-[15px] transition-all hover:scale-[1.03] active:scale-[0.98]"
+          <button onClick={() => krnlNavigate("contacto")}
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-full font-[600] text-white text-[15px] transition-all hover:scale-[1.03] active:scale-[0.98]"
             style={{ background: GRAD, boxShadow: `0 6px 28px ${B.purple}40` }}>
             Conoce KRNL <ArrowRight className="w-4 h-4" strokeWidth={2.2} />
           </button>

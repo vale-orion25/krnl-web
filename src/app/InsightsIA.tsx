@@ -221,15 +221,15 @@ function HeroInsights({ onExplorar, onCasos }: { onExplorar: () => void; onCasos
             <motion.h1 className="font-[800] leading-tight mb-5"
               style={{ fontSize: "clamp(26px, 3.6vw, 46px)", color: B.text }}
               initial={{ opacity: 0, y: 18 }} animate={inV ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.65, delay: 0.1, ease }}>
-              Insights para operar{" "}
+              La biblioteca de recursos{" "}
               <span style={{ background: GRAD, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
-                IA empresarial
+                para operar IA
               </span>{" "}
-              con control
+              con criterio
             </motion.h1>
             <motion.p style={{ fontSize: 16, color: B.textSub, lineHeight: 1.7, maxWidth: 480, marginBottom: 32 }}
               initial={{ opacity: 0, y: 12 }} animate={inV ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.55, delay: 0.18, ease }}>
-              Guías, casos de uso y análisis para entender cómo gobernar modelos, agentes, automatizaciones y datos en entornos corporativos.
+              Guías, casos de uso y análisis prácticos para adoptar y escalar IA en entornos corporativos.
             </motion.p>
             <motion.div className="flex gap-3 flex-wrap"
               initial={{ opacity: 0, y: 10 }} animate={inV ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5, delay: 0.26, ease }}>
@@ -598,14 +598,14 @@ function CTAFinalInsights() {
         <motion.h2 className="font-[800] mb-5 leading-tight"
           style={{ fontSize: "clamp(22px, 2.8vw, 38px)", color: B.text }}
           initial={{ opacity: 0, y: 18 }} animate={inV ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6, ease }}>
-          Aprende a operar IA con{" "}
+          De la guía a tu{" "}
           <span style={{ background: GRAD, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
-            soberanía, trazabilidad y control
+            propia operación de IA
           </span>
         </motion.h2>
         <motion.p style={{ fontSize: 16, color: B.textSub, lineHeight: 1.7, marginBottom: 36 }}
           initial={{ opacity: 0, y: 12 }} animate={inV ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.55, delay: 0.12, ease }}>
-          KRNL ayuda a pasar de herramientas aisladas a una operación de IA centralizada, gobernada y escalable.
+          Habla con el equipo KRNL para llevar estas prácticas y casos de uso a tu empresa.
         </motion.p>
         <motion.div className="flex gap-4 justify-center flex-wrap"
           initial={{ opacity: 0, y: 10 }} animate={inV ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5, delay: 0.22, ease }}>
