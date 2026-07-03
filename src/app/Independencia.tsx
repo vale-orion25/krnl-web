@@ -1,13 +1,14 @@
-import { useRef, useState } from "react";
-import { motion, useInView } from "motion/react";
+import { useRef, useState, type CSSProperties } from "react";
+import { motion, useInView, useReducedMotion } from "motion/react";
 import {
   ArrowRight, Shield, FileText, Activity, Database, Users, Workflow,
   BarChart3, MessageSquare, Bot, Check, X, Globe, Lock, HardDrive,
-  TrendingUp, Layers, Server, Eye, AlertTriangle, ChevronRight,
+  TrendingUp, Layers, Eye, AlertTriangle, ChevronRight,
 } from "lucide-react";
 import { ImageWithFallback } from "@/app/components/figma/ImageWithFallback";
 import krnlLogo     from "@/imports/krnl-logo-dark.png";
 import krnlIsoWhite from "@/imports/krnl-iso-white.png";
+import krnlHeroIso  from "@/imports/krnl-iso.png";
 import KrnlFooter from "./KrnlFooter";
 import { krnlNavigate } from "./navigate";
 
@@ -41,11 +42,10 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
 
 // ── 1. HERO — MODEL ROUTER ─────────────────────────────────────────────────────
 const MODELS = [
-  { name: "GPT-4o",        col: "#10A37F", dot: "#10A37F" },
-  { name: "Claude 3.5",    col: "#C07F56", dot: "#C07F56" },
-  { name: "Gemini 1.5",    col: "#4285F4", dot: "#4285F4" },
-  { name: "Llama 3.1",     col: "#7C3AED", dot: "#7C3AED" },
-  { name: "Modelos locales", col: B.textMuted, dot: B.textMuted },
+  { name: "ChatGPT",         sub: "OpenAI",    col: "#10A37F", LogoIcon: OpenAIIcon },
+  { name: "Claude",          sub: "Anthropic", col: "#C07F56", logo: "https://i.logos-download.com/114232/31117-s2560-aa51d43aaa1664d26ce478638acbf9e7.png/Claude_Logo_2023_icon-s2560.png?dl" },
+  { name: "Gemini",          sub: "Google",    col: "#6C63FF", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Google_Gemini_icon_2025.svg/1920px-Google_Gemini_icon_2025.svg.png" },
+  { name: "Modelos locales", sub: "On-premise", col: "#2D3748", logo: "https://cdn.simpleicons.org/ollama/2D3748" },
 ];
 
 const OUTPUTS = [
@@ -63,7 +63,7 @@ function HeroRouter() {
     <div ref={ref} className="relative rounded-2xl overflow-hidden"
       style={{ background: "rgba(255,255,255,0.92)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: `1px solid ${B.borderSoft}`, boxShadow: "0 20px 72px rgba(109,43,255,0.10)" }}>
       {/* Top bar */}
-      <div className="flex items-center gap-2 px-5 py-3" style={{ borderBottom: `1px solid ${B.borderSoft}`, background: B.softBg }}>
+      <div className="flex flex-wrap items-center gap-2 px-5 py-3" style={{ borderBottom: `1px solid ${B.borderSoft}`, background: B.softBg }}>
         <span className="w-2.5 h-2.5 rounded-full" style={{ background: "#FC5153" }} />
         <span className="w-2.5 h-2.5 rounded-full" style={{ background: "#FCBB40" }} />
         <span className="w-2.5 h-2.5 rounded-full" style={{ background: "#33C748" }} />
@@ -71,7 +71,8 @@ function HeroRouter() {
       </div>
 
       {/* Diagram */}
-      <div className="p-6 grid items-center gap-0"
+      <div className="overflow-x-auto">
+      <div className="p-6 grid items-center gap-0 min-w-[600px] md:min-w-0"
         style={{ gridTemplateColumns: "1fr 32px 200px 32px 1fr" }}>
 
         {/* Left: models */}
@@ -82,9 +83,12 @@ function HeroRouter() {
               style={{ background: B.softBg, border: `1px solid ${B.borderSoft}` }}
               initial={{ opacity: 0, x: -12 }} animate={inV ? { opacity: 1, x: 0 } : {}}
               transition={{ delay: 0.3 + i * 0.08, duration: 0.4, ease }}>
-              <div className="w-6 h-6 rounded-md flex items-center justify-center shrink-0"
-                style={{ background: `${m.col}20` }}>
-                <span className="w-2 h-2 rounded-full" style={{ background: m.col }} />
+              <div className="w-6 h-6 flex items-center justify-center shrink-0">
+                {m.LogoIcon ? (
+                  <m.LogoIcon className="w-full h-full" style={{ color: m.col }} />
+                ) : (
+                  <img src={m.logo} alt={m.name} className="w-full h-full object-contain" />
+                )}
               </div>
               <p className="text-[12px] font-[500]" style={{ color: B.text }}>{m.name}</p>
               <span className="ml-auto text-[9px] px-1.5 py-0.5 rounded font-[600]"
@@ -117,12 +121,8 @@ function HeroRouter() {
             animate={{ opacity: [0.5, 1, 0.5] }}
             transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut" }} />
           <div className="relative z-10">
-            <div className="w-10 h-10 rounded-xl flex items-center justify-center mx-auto mb-2"
-              style={{ background: GRAD, boxShadow: `0 4px 16px ${B.purple}50` }}>
-              <Shield className="w-5 h-5 text-white" strokeWidth={1.75} />
-            </div>
-            <img src={krnlLogo} alt="KRNL" style={{ display: "block", maxWidth: 90, height: "auto", objectFit: "contain", margin: "0 auto 4px" }} />
-            <p className="text-[9px] font-[600] tracking-[0.1em] uppercase mt-0.5 mb-3" style={{ ...MONO, color: B.purple }}>AI OS Core</p>
+            <img src={krnlHeroIso} alt="KRNL" style={{ display: "block", width: 64, height: "auto", objectFit: "contain", margin: "0 auto 10px" }} />
+            <p className="text-[9px] font-[600] tracking-[0.1em] uppercase mb-3" style={{ ...MONO, color: B.purple }}>Core operativo</p>
             {["Gobierno", "Trazabilidad", "Costos", "Guardrails"].map(f => (
               <div key={f} className="flex items-center gap-1.5 text-left mb-1">
                 <Check className="w-2.5 h-2.5 shrink-0" style={{ color: B.purple }} strokeWidth={2.5} />
@@ -162,10 +162,11 @@ function HeroRouter() {
           ))}
         </div>
       </div>
+      </div>
 
       {/* Bottom status bar */}
-      <div className="flex items-center gap-4 px-5 py-3" style={{ borderTop: `1px solid ${B.borderSoft}`, background: B.softBg }}>
-        {[["Modelo activo", "GPT-4o", B.purple], ["Política", "Aplicada", "#22c55e"], ["Trazabilidad", "Activa", B.magenta]].map(([l, v, c]) => (
+      <div className="flex flex-wrap items-center gap-4 px-5 py-3" style={{ borderTop: `1px solid ${B.borderSoft}`, background: B.softBg }}>
+        {[["Modelo activo", "ChatGPT", B.purple], ["Política", "Aplicada", "#22c55e"], ["Trazabilidad", "Activa", B.magenta]].map(([l, v, c]) => (
           <div key={l} className="flex items-center gap-1.5">
             <span className="text-[9px]" style={{ color: B.textMuted }}>{l}:</span>
             <span className="text-[9px] font-[700]" style={{ color: c }}>{v}</span>
@@ -189,7 +190,7 @@ function HeroIndependencia() {
       <div className="absolute top-16 -right-16 w-56 h-56 rounded-full pointer-events-none"
         style={{ background: `radial-gradient(circle, ${B.magentaSoft}55 0%, transparent 72%)`, filter: "blur(32px)" }} />
 
-      <div className="relative z-10 max-w-[1200px] mx-auto px-10">
+      <div className="relative z-10 max-w-[1200px] mx-auto px-5 md:px-10">
         {/* Badge */}
         <motion.div className="flex justify-center mb-6"
           initial={{ opacity: 0, y: 12 }} animate={inV ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5, ease }}>
@@ -214,22 +215,9 @@ function HeroIndependencia() {
         <motion.p className="text-center mb-10 mx-auto"
           style={{ fontSize: 17, color: B.textSub, maxWidth: 620, lineHeight: 1.65 }}
           initial={{ opacity: 0, y: 12 }} animate={inV ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.55, delay: 0.2, ease }}>
-          KRNL permite operar con GPT-4o, Claude, Gemini, Llama y modelos locales desde una capa común, manteniendo el control sobre tus datos, agentes, flujos y conocimiento.
+          KRNL permite operar con ChatGPT, Claude, Gemini y modelos locales desde una capa común, manteniendo el control sobre tus datos, agentes, flujos y conocimiento.
         </motion.p>
 
-        {/* CTAs */}
-        <motion.div className="flex items-center justify-center gap-4 mb-14"
-          initial={{ opacity: 0, y: 10 }} animate={inV ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5, delay: 0.3, ease }}>
-          <button onClick={() => krnlNavigate("contacto")}
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-full font-[600] text-white text-[15px] transition-all hover:scale-[1.03] active:scale-[0.98]"
-            style={{ background: GRAD, boxShadow: `0 6px 28px ${B.purple}40` }}>
-            Conoce KRNL <ArrowRight className="w-4 h-4" strokeWidth={2.2} />
-          </button>
-          <button className="inline-flex items-center gap-2 px-6 py-3 rounded-full font-[500] text-[15px] transition-all hover:scale-[1.02]"
-            style={{ background: B.surface, border: `1.5px solid ${B.border}`, color: B.text, boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}>
-            Ver arquitectura
-          </button>
-        </motion.div>
 
         {/* Hero diagram */}
         <motion.div
@@ -248,19 +236,19 @@ function SectionLockIn() {
 
   const risks = [
     {
-      Icon: TrendingUp, col: "#DC2626", bg: "#FFF0F0", border: "#DC262620",
+      Icon: TrendingUp, tagCol: "#DC2626",
       title: "Cambios de precio",
       desc: "Un proveedor puede cambiar tarifas, límites o condiciones y afectar toda la operación de IA del negocio.",
       tag: "Riesgo comercial",
     },
     {
-      Icon: Eye, col: B.magenta, bg: B.magentaSoft, border: `${B.magenta}25`,
+      Icon: Eye, tagCol: B.magenta,
       title: "Caja negra",
       desc: "Sin una capa común, cada modelo opera con reglas, trazabilidad y datos separados, sin visibilidad central.",
       tag: "Riesgo operativo",
     },
     {
-      Icon: Database, col: "#F59E0B", bg: "#FFFBEB", border: "#F59E0B25",
+      Icon: Database, tagCol: "#F59E0B",
       title: "Contexto perdido",
       desc: "El conocimiento queda amarrado a herramientas, cuentas personales o configuraciones difíciles de migrar.",
       tag: "Riesgo estratégico",
@@ -269,7 +257,7 @@ function SectionLockIn() {
 
   return (
     <section ref={ref} style={{ background: B.surface, borderTop: `1px solid ${B.border}` }}>
-      <div className="max-w-[1200px] mx-auto px-10 py-20">
+      <div className="max-w-[1200px] mx-auto px-5 md:px-10 py-14 md:py-20">
         <motion.div className="text-center mb-12"
           initial={{ opacity: 0, y: 14 }} animate={inV ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.55, ease }}>
           <SectionLabel>El problema</SectionLabel>
@@ -281,26 +269,31 @@ function SectionLockIn() {
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-3 gap-5">
-          {risks.map(({ Icon, col, bg, border, title, desc, tag }, i) => (
-            <motion.div key={title} className="relative overflow-hidden rounded-2xl p-6"
-              style={{ background: B.surface, border: `1px solid ${B.borderSoft}`, boxShadow: "0 2px 14px rgba(0,0,0,0.04)" }}
+        <svg style={{ position: "absolute", width: 0, height: 0, overflow: "hidden" }} aria-hidden="true">
+          <defs>
+            <linearGradient id="lockinIconGrad" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stopColor="#D4009A" />
+              <stop offset="100%" stopColor="#6D2BFF" />
+            </linearGradient>
+          </defs>
+        </svg>
+
+        <div className="grid grid-cols-1 md:grid-cols-3">
+          {risks.map(({ Icon, tagCol, title, desc, tag }, i) => (
+            <motion.div key={title}
+              className={`group relative flex flex-col py-6 md:py-0 md:px-10 ${i === 0 ? "md:pl-0" : "md:border-l"} ${i === risks.length - 1 ? "md:pr-0" : ""}`}
+              style={{ borderColor: B.borderSoft }}
               initial={{ opacity: 0, y: 20 }} animate={inV ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.5, delay: 0.08 + i * 0.12, ease }}
-              whileHover={{ y: -4, boxShadow: "0 14px 40px rgba(0,0,0,0.07)", transition: { duration: 0.2 } }}>
-              {/* Top accent strip */}
-              <div className="absolute top-0 left-0 right-0 h-0.5 rounded-t-2xl"
-                style={{ background: `linear-gradient(90deg, ${col}70, transparent)` }} />
-              <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-5"
-                style={{ background: bg, border: `1px solid ${border}` }}>
-                <Icon className="w-5 h-5" style={{ color: col }} strokeWidth={1.75} />
+              transition={{ duration: 0.5, delay: 0.1 + i * 0.13, ease }}>
+              <Icon className="w-9 h-9 mb-5" style={{ stroke: "url(#lockinIconGrad)", color: "transparent" }} strokeWidth={1.5} />
+              <p className="text-[17px] font-[800] mb-3 leading-snug" style={{ color: B.text }}>{title}</p>
+              <div className="h-px rounded-full mb-4 scale-x-0 group-hover:scale-x-100 transition-transform duration-300"
+                style={{ background: GRAD, width: 32, transformOrigin: "left" }} />
+              <p className="text-[13.5px] leading-relaxed mb-6" style={{ color: B.textSub }}>{desc}</p>
+              <div className="flex items-center gap-2 mt-auto">
+                <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: tagCol }} />
+                <span className="text-[10px] font-[700] uppercase tracking-[0.08em]" style={{ color: tagCol }}>{tag}</span>
               </div>
-              <div className="flex items-start justify-between mb-3 gap-2">
-                <p className="text-[15px] font-[700] leading-snug" style={{ color: B.text }}>{title}</p>
-                <span className="text-[9px] px-2 py-1 rounded-full font-[700] shrink-0"
-                  style={{ background: bg, color: col, border: `1px solid ${border}` }}>{tag}</span>
-              </div>
-              <p className="text-[13px] leading-relaxed" style={{ color: B.textSub }}>{desc}</p>
             </motion.div>
           ))}
         </div>
@@ -310,12 +303,23 @@ function SectionLockIn() {
 }
 
 // ── 3. CAPA AGNÓSTICA MULTI-MODELO ────────────────────────────────────────────
+function OpenAIIcon({ className, style }: { className?: string; style?: CSSProperties }) {
+  return (
+    <svg className={className} style={style} viewBox="0 0 256 260" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+      <path d="M239.184 106.203a64.72 64.72 0 0 0-5.576-53.103C219.452 28.459 191 15.784 163.213 21.74A65.586 65.586 0 0 0 52.096 45.22a64.72 64.72 0 0 0-43.23 31.36c-14.31 24.602-11.061 55.634 8.033 76.74a64.67 64.67 0 0 0 5.525 53.102c14.174 24.65 42.644 37.324 70.446 31.36a64.72 64.72 0 0 0 48.754 21.744c28.481.025 53.714-18.361 62.414-45.481a64.77 64.77 0 0 0 43.229-31.36c14.137-24.558 10.875-55.423-8.083-76.483m-97.56 136.338a48.4 48.4 0 0 1-31.105-11.255l1.535-.87l51.67-29.825a8.6 8.6 0 0 0 4.247-7.367v-72.85l21.845 12.636c.218.111.37.32.409.563v60.367c-.056 26.818-21.783 48.545-48.601 48.601M37.158 197.93a48.35 48.35 0 0 1-5.781-32.589l1.534.921l51.722 29.826a8.34 8.34 0 0 0 8.441 0l63.181-36.425v25.221a.87.87 0 0 1-.358.665l-52.335 30.184c-23.257 13.398-52.97 5.431-66.404-17.803M23.549 85.38a48.5 48.5 0 0 1 25.58-21.333v61.39a8.29 8.29 0 0 0 4.195 7.316l62.874 36.272l-21.845 12.636a.82.82 0 0 1-.767 0L41.353 151.53c-23.211-13.454-31.171-43.144-17.804-66.405zm179.466 41.695l-63.08-36.63L161.73 77.86a.82.82 0 0 1 .768 0l52.233 30.184a48.6 48.6 0 0 1-7.316 87.635v-61.391a8.54 8.54 0 0 0-4.4-7.213m21.742-32.69l-1.535-.922l-51.619-30.081a8.39 8.39 0 0 0-8.492 0L99.98 99.808V74.587a.72.72 0 0 1 .307-.665l52.233-30.133a48.652 48.652 0 0 1 72.236 50.391zM88.061 139.097l-21.845-12.585a.87.87 0 0 1-.41-.614V65.685a48.652 48.652 0 0 1 79.757-37.346l-1.535.87l-51.67 29.825a8.6 8.6 0 0 0-4.246 7.367zm11.868-25.58L128.067 97.3l28.188 16.218v32.434l-28.086 16.218l-28.188-16.218z" />
+    </svg>
+  );
+}
+
 const MODEL_DETAILS = [
-  { name: "GPT-4o",         col: "#10A37F", chip: "Alta precisión",     uso: "Análisis complejo, redacción y razonamiento avanzado.",                cost: "$0.0050/1k", precision: 96 },
-  { name: "Claude 3.5",     col: "#C07F56", chip: "Costo optimizado",   uso: "Documentos largos, síntesis y tareas de revisión extensa.",            cost: "$0.0030/1k", precision: 94 },
-  { name: "Gemini 1.5",     col: "#4285F4", chip: "Multimodal",         uso: "Análisis de datos, código y contenido multimedia empresarial.",        cost: "$0.0035/1k", precision: 93 },
-  { name: "Llama 3.1",      col: "#7C3AED", chip: "Open source",        uso: "Casos sin necesidad de enviar datos a proveedores externos.",          cost: "$0.0008/1k", precision: 88 },
-  { name: "Modelos locales", col: B.textSub, chip: "Local / On-premise", uso: "Máxima soberanía de datos, sin salida de información del perímetro.", cost: "Sin costo API", precision: 82 },
+  { name: "ChatGPT", sub: "OpenAI",    col: "#10A37F", LogoIcon: OpenAIIcon,
+    uso: "Análisis complejo, redacción y razonamiento avanzado.",                cost: "$0.0050/1k", precision: 96 },
+  { name: "Claude",  sub: "Anthropic", col: "#C07F56", logo: "https://i.logos-download.com/114232/31117-s2560-aa51d43aaa1664d26ce478638acbf9e7.png/Claude_Logo_2023_icon-s2560.png?dl",
+    uso: "Documentos largos, síntesis y tareas de revisión extensa.",            cost: "$0.0030/1k", precision: 94 },
+  { name: "Gemini",  sub: "Google",    col: "#6C63FF", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Google_Gemini_icon_2025.svg/1920px-Google_Gemini_icon_2025.svg.png",
+    uso: "Análisis de datos, código y contenido multimedia empresarial.",        cost: "$0.0035/1k", precision: 93 },
+  { name: "Modelos locales", sub: "On-premise", col: "#2D3748", logo: "https://cdn.simpleicons.org/ollama/2D3748",
+    uso: "Máxima soberanía de datos: modelos open source u on-premise, sin salida de información del perímetro.", cost: "Sin costo API", precision: 85 },
 ];
 
 function SectionMultiModelo() {
@@ -325,9 +329,9 @@ function SectionMultiModelo() {
   const m = MODEL_DETAILS[sel];
 
   return (
-    <section ref={ref} className="relative overflow-hidden"
+    <section ref={ref} id="independencia-arquitectura" className="relative overflow-hidden"
       style={{ background: `linear-gradient(160deg, ${B.softBg} 0%, ${B.purpleSoft}30 100%)`, borderTop: `1px solid ${B.border}` }}>
-      <div className="max-w-[1200px] mx-auto px-10 py-20">
+      <div className="max-w-[1200px] mx-auto px-5 md:px-10 py-14 md:py-20">
         <motion.div className="text-center mb-12"
           initial={{ opacity: 0, y: 14 }} animate={inV ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.55, ease }}>
           <SectionLabel>Capa multi-modelo</SectionLabel>
@@ -339,7 +343,7 @@ function SectionMultiModelo() {
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-2 gap-8 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
           {/* Model tabs */}
           <motion.div
             initial={{ opacity: 0, x: -16 }} animate={inV ? { opacity: 1, x: 0 } : {}} transition={{ duration: 0.6, delay: 0.15, ease }}>
@@ -355,17 +359,18 @@ function SectionMultiModelo() {
                   }}
                   onClick={() => setSel(i)}
                   whileHover={{ y: -1, transition: { duration: 0.15 } }}>
-                  {/* Color indicator */}
-                  <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
-                    style={{ background: `${md.col}18` }}>
-                    <span className="w-3 h-3 rounded-full" style={{ background: md.col }} />
+                  {/* Logo */}
+                  <div className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0 p-1.5"
+                    style={{ background: `${md.col}12` }}>
+                    {md.LogoIcon ? (
+                      <md.LogoIcon className="w-full h-full" style={{ color: md.col }} />
+                    ) : (
+                      <img src={md.logo} alt={md.name} className="w-full h-full object-contain" />
+                    )}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-0.5">
-                      <p className="text-[13px] font-[700]" style={{ color: B.text }}>{md.name}</p>
-                      <span className="text-[9px] px-2 py-0.5 rounded-full font-[600]"
-                        style={{ background: `${md.col}18`, color: md.col }}>{md.chip}</span>
-                    </div>
+                    <p className="text-[13px] font-[700] mb-0.5" style={{ color: B.text }}>{md.name}</p>
+                    <p className="text-[10px] font-[600] mb-1" style={{ color: B.textMuted }}>{md.sub}</p>
                     <p className="text-[11px] leading-snug" style={{ color: B.textSub }}>{md.uso}</p>
                   </div>
                   {sel === i && (
@@ -392,16 +397,18 @@ function SectionMultiModelo() {
                 {/* Selected model */}
                 <div className="flex items-center gap-3 rounded-xl px-4 py-3 mb-4"
                   style={{ background: `${m.col}10`, border: `1px solid ${m.col}30` }}>
-                  <div className="w-7 h-7 rounded-lg flex items-center justify-center"
-                    style={{ background: `${m.col}25` }}>
-                    <span className="w-3 h-3 rounded-full" style={{ background: m.col }} />
+                  <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 p-1.5"
+                    style={{ background: "#fff" }}>
+                    {m.LogoIcon ? (
+                      <m.LogoIcon className="w-full h-full" style={{ color: m.col }} />
+                    ) : (
+                      <img src={m.logo} alt={m.name} className="w-full h-full object-contain" />
+                    )}
                   </div>
                   <div>
                     <p className="text-[11px] font-[700]" style={{ color: B.text }}>{m.name}</p>
-                    <p className="text-[9px]" style={{ color: B.textMuted }}>Modelo seleccionado</p>
+                    <p className="text-[9px]" style={{ color: B.textMuted }}>{m.sub}</p>
                   </div>
-                  <span className="ml-auto text-[9px] px-2 py-0.5 rounded-full font-[700]"
-                    style={{ background: m.col, color: "#fff" }}>{m.chip}</span>
                 </div>
 
                 {/* Info rows */}
@@ -475,8 +482,8 @@ function SectionKnowledge() {
 
   return (
     <section ref={ref} style={{ background: B.surface, borderTop: `1px solid ${B.border}` }}>
-      <div className="max-w-[1200px] mx-auto px-10 py-20">
-        <div className="grid grid-cols-2 gap-16 items-center">
+      <div className="max-w-[1200px] mx-auto px-5 md:px-10 py-14 md:py-20">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
           {/* Left: text */}
           <motion.div initial={{ opacity: 0, x: -16 }} animate={inV ? { opacity: 1, x: 0 } : {}} transition={{ duration: 0.6, ease }}>
             <SectionLabel>Soberanía de datos</SectionLabel>
@@ -523,7 +530,7 @@ function SectionKnowledge() {
               </div>
 
               {/* Knowledge items arranged around hub */}
-              <div className="grid grid-cols-2 gap-3 mb-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
                 {VAULT_ITEMS.slice(0, 4).map(({ label, Icon, col }, i) => (
                   <motion.div key={label}
                     className="flex items-center gap-2.5 rounded-xl px-3 py-2.5"
@@ -569,9 +576,69 @@ function SectionKnowledge() {
 }
 
 // ── 5. CAMBIA DE MODELO SIN CAMBIAR TU OPERACIÓN ─────────────────────────────
+// ── Low-poly node network background (decorative, scoped to this section) ─────
+function NetworkMeshBg({ mouse, reduced }: { mouse: { x: number; y: number }; reduced: boolean }) {
+  // Nodes hug the outer edges/bottom band — center stays clear behind the title and cards.
+  const nodes: [number, number][] = [
+    [10, 10], [40, 70], [110, 160], [60, 270], [130, 350], [50, 450],
+    [300, 465], [480, 435], [650, 470], [820, 445], [950, 465],
+    [1140, 460], [1080, 400], [1150, 300], [1090, 180], [1160, 80], [1190, 20],
+  ];
+  const edges: [number, number][] = [
+    [0, 1], [1, 2], [2, 3], [1, 3], [3, 4], [3, 5], [4, 6], [5, 6],
+    [6, 7], [7, 8], [8, 9], [7, 9], [9, 10], [10, 11], [11, 12], [10, 12],
+    [12, 13], [13, 14], [14, 15], [12, 14], [15, 16],
+  ];
+  const colors = ["#B8A6F0", "#9B7FE8", "#F0A8D4", "#AEC2F5"];
+
+  return (
+    <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true"
+      style={{
+        transform: reduced ? undefined : `translate3d(${mouse.x * 6}px, ${mouse.y * 5}px, 0)`,
+        transition: "transform 0.6s cubic-bezier(0.22,1,0.36,1)",
+      }}>
+      <motion.div className="w-full h-full" style={{ opacity: 0.9 }}
+        animate={reduced ? {} : { x: [0, 6, -6, 0], y: [0, -5, 5, 0] }}
+        transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}>
+        <svg className="w-full h-full" viewBox="0 0 1200 500" preserveAspectRatio="xMidYMid slice">
+          {edges.map(([a, b], i) => {
+            const [x1, y1] = nodes[a];
+            const [x2, y2] = nodes[b];
+            return (
+              <motion.line key={`e-${i}`} x1={x1} y1={y1} x2={x2} y2={y2}
+                stroke={colors[i % colors.length]} strokeWidth={0.6}
+                initial={{ opacity: 0 }}
+                animate={reduced ? { opacity: 0.1 } : { opacity: [0.08, 0.14, 0.08] }}
+                transition={reduced ? { duration: 0.6 } : { duration: 14 + (i % 6) * 1.6, repeat: Infinity, ease: "easeInOut", delay: (i % 7) * 0.6 }} />
+            );
+          })}
+          {nodes.map(([x, y], i) => {
+            const isFar = i % 4 === 0;
+            return (
+              <motion.circle key={`n-${i}`} cx={x} cy={y} r={isFar ? 2.4 : 1.3} fill={colors[i % colors.length]}
+                style={isFar ? { filter: "blur(1.2px)" } : undefined}
+                initial={{ opacity: 0 }}
+                animate={reduced ? { opacity: 0.15 } : { opacity: [0.12, 0.22, 0.12] }}
+                transition={reduced ? { duration: 0.6 } : { duration: 12 + (i % 5) * 2.2, repeat: Infinity, ease: "easeInOut", delay: (i % 6) * 0.5 }} />
+            );
+          })}
+        </svg>
+      </motion.div>
+    </div>
+  );
+}
+
 function SectionCambioModelo() {
   const ref = useRef<HTMLElement>(null);
   const inV = useInView(ref, { once: true, margin: "-80px" });
+  const reduced = useReducedMotion();
+  const [mouse, setMouse] = useState({ x: 0, y: 0 });
+
+  const handleMove = (e: React.MouseEvent<HTMLElement>) => {
+    if (reduced) return;
+    const r = e.currentTarget.getBoundingClientRect();
+    setMouse({ x: (e.clientX - r.left) / r.width - 0.5, y: (e.clientY - r.top) / r.height - 0.5 });
+  };
 
   const sinKrnl = [
     "Cada área usa herramientas separadas y aisladas",
@@ -587,13 +654,14 @@ function SectionCambioModelo() {
   ];
 
   return (
-    <section ref={ref} className="relative overflow-hidden"
+    <section ref={ref} onMouseMove={handleMove} className="relative overflow-hidden"
       style={{ background: `linear-gradient(160deg, ${B.softBg} 0%, ${B.purpleSoft}25 100%)`, borderTop: `1px solid ${B.border}` }}>
-      <div className="max-w-[1200px] mx-auto px-10 py-20">
-        <motion.div className="text-center mb-12"
+      <NetworkMeshBg mouse={mouse} reduced={!!reduced} />
+      <div className="relative z-10 max-w-[1200px] mx-auto px-5 md:px-10 py-20 md:py-32">
+        <motion.div className="text-center mb-16 md:mb-20"
           initial={{ opacity: 0, y: 14 }} animate={inV ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.55, ease }}>
           <SectionLabel>Portabilidad</SectionLabel>
-          <h2 className="font-[800] mb-4" style={{ fontSize: "clamp(26px, 3.2vw, 40px)", color: B.text }}>
+          <h2 className="font-[800] mb-5" style={{ fontSize: "clamp(26px, 3.2vw, 40px)", color: B.text }}>
             Cambia el modelo. Mantén la operación.
           </h2>
           <p style={{ color: B.textSub, fontSize: 16, maxWidth: 500, margin: "0 auto" }}>
@@ -601,7 +669,7 @@ function SectionCambioModelo() {
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-2 gap-5">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 lg:gap-6">
           {/* Sin KRNL */}
           <motion.div className="rounded-2xl p-6"
             style={{ background: "#FFF8F8", border: `1px solid #DC262618` }}
@@ -630,7 +698,7 @@ function SectionCambioModelo() {
 
           {/* Con KRNL */}
           <motion.div className="rounded-2xl p-6"
-            style={{ background: `linear-gradient(145deg, ${B.purpleSoft}, ${B.magentaSoft}80)`, border: `1px solid ${B.purple}22` }}
+            style={{ background: `linear-gradient(145deg, ${B.purpleSoft}, ${B.magentaSoft}80)`, border: `1px solid ${B.purple}22`, boxShadow: `0 14px 40px ${B.purple}14` }}
             initial={{ opacity: 0, x: 16 }} animate={inV ? { opacity: 1, x: 0 } : {}} transition={{ duration: 0.6, delay: 0.25, ease }}>
             <div className="flex items-center gap-3 mb-6">
               <div className="w-8 h-8 rounded-xl flex items-center justify-center"
@@ -671,7 +739,7 @@ function SectionIndependenciaOp() {
       Icon: Globe,    col: B.purple,
       title: "Modelos",
       desc: "Elige el LLM adecuado para cada tarea: precisión, costo, confidencialidad o contexto específico.",
-      mini: ["GPT-4o", "Claude", "Gemini", "Llama", "Local"],
+      mini: ["ChatGPT", "Claude", "Gemini", "Local"],
     },
     {
       Icon: Database, col: B.magenta,
@@ -695,7 +763,7 @@ function SectionIndependenciaOp() {
 
   return (
     <section ref={ref} style={{ background: B.surface, borderTop: `1px solid ${B.border}` }}>
-      <div className="max-w-[1200px] mx-auto px-10 py-20">
+      <div className="max-w-[1200px] mx-auto px-5 md:px-10 py-14 md:py-20">
         <motion.div className="text-center mb-12"
           initial={{ opacity: 0, y: 14 }} animate={inV ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.55, ease }}>
           <SectionLabel>Independencia operacional</SectionLabel>
@@ -707,7 +775,7 @@ function SectionIndependenciaOp() {
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-4 gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
           {pillars.map(({ Icon, col, title, desc, mini }, i) => (
             <motion.div key={title} className="relative overflow-hidden rounded-2xl p-6"
               style={{ background: B.surface, border: `1px solid ${B.borderSoft}`, boxShadow: "0 2px 14px rgba(109,43,255,0.04)" }}
@@ -754,7 +822,7 @@ function CTAFinal() {
         <div className="absolute bottom-0 right-1/4 w-64 h-64 rounded-full"
           style={{ background: `radial-gradient(circle, ${B.magentaSoft} 0%, transparent 72%)`, opacity: 0.5 }} />
       </div>
-      <div className="relative z-10 max-w-[720px] mx-auto px-10 py-28 text-center">
+      <div className="relative z-10 max-w-[720px] mx-auto px-5 md:px-10 py-16 md:py-28 text-center">
         <motion.div className="flex justify-center mb-6"
           initial={{ opacity: 0, y: 10 }} animate={inV ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5, ease }}>
           <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-[11px] font-[600] tracking-[0.14em] uppercase"
@@ -773,13 +841,15 @@ function CTAFinal() {
           initial={{ opacity: 0, y: 12 }} animate={inV ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.55, delay: 0.2, ease }}>
           KRNL permite operar IA empresarial sin depender de un único proveedor, herramienta o cuenta aislada.
         </motion.p>
-        <motion.div className="flex items-center justify-center gap-4"
+        <motion.div className="flex flex-wrap items-center justify-center gap-4"
           initial={{ opacity: 0, y: 10 }} animate={inV ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5, delay: 0.3, ease }}>
-          <button className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full font-[600] text-white text-[15px] transition-all hover:scale-[1.03] active:scale-[0.98]"
+          <button onClick={() => krnlNavigate("contacto")}
+            className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full font-[600] text-white text-[15px] transition-all hover:scale-[1.03] active:scale-[0.98]"
             style={{ background: GRAD, boxShadow: `0 8px 32px ${B.purple}40` }}>
             Hablar con un especialista <ArrowRight className="w-4 h-4" strokeWidth={2.2} />
           </button>
-          <button className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full font-[500] text-[15px] transition-all hover:scale-[1.02]"
+          <button onClick={() => document.getElementById("independencia-arquitectura")?.scrollIntoView({ behavior: "smooth" })}
+            className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full font-[500] text-[15px] transition-all hover:scale-[1.02]"
             style={{ background: B.surface, border: `1.5px solid ${B.border}`, color: B.text, boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}>
             Ver arquitectura
           </button>

@@ -133,7 +133,7 @@ function BrandColumn() {
         className="text-[14px] leading-relaxed mb-7"
         style={{ color: B.textSub, maxWidth: 260, lineHeight: 1.75 }}
       >
-        Plataforma de IA corporativa para centralizar, gobernar y operar agentes, modelos y automatizaciones con seguridad, trazabilidad y control.
+        Plataforma de IA corporativa para conectar agentes, modelos y automatizaciones, con gobierno y trazabilidad de extremo a extremo.
       </p>
       <a
         href="#"

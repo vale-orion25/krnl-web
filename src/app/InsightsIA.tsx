@@ -1,7 +1,7 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { motion, useInView } from "motion/react";
 import {
-  ArrowRight, Search, Shield, Database, Box, Lock, FileText,
+  ArrowRight, ArrowLeft, Search, Shield, Database, Box, Lock, FileText,
   CheckCircle2, Workflow, Clock,
 } from "lucide-react";
 import KrnlFooter from "./KrnlFooter";
@@ -54,43 +54,130 @@ const FEATURED = [
     title:"Qué es Shadow AI y por qué preocupa a las empresas",
     desc: "Cómo el uso disperso de herramientas de IA puede afectar datos, costos, trazabilidad y gobierno corporativo.",
     time: "5 min",
+    dest: { kind: "page", page: "shadowai" },
   },
   {
     cat:  "Soberanía IA",
     title:"Por qué no conviene depender de un solo modelo",
     desc: "Multi-modelo, portabilidad del contexto y control sobre el conocimiento institucional.",
     time: "6 min",
+    dest: { kind: "page", page: "independencia" },
   },
   {
     cat:  "Gobierno IA",
     title:"Cómo gobernar agentes de IA sin frenar la innovación",
     desc: "Políticas, permisos, auditoría y supervisión humana para escalar IA con seguridad.",
     time: "7 min",
+    dest: { kind: "page", page: "gobierno" },
   },
 ];
 
 const ARTICLES = [
-  { cat: "Producto",       title: "De chatbot a operación IA: cómo escalar con control",              desc: "El camino desde un asistente básico hasta una plataforma de agentes gobernada y trazable.",            time: "4 min" },
-  { cat: "Soberanía IA",   title: "Soberanía de datos en IA empresarial",                             desc: "Cómo garantizar que el conocimiento corporativo no quede atrapado en proveedores externos.",           time: "5 min" },
-  { cat: "AIOps",          title: "Qué es AIOps y cómo ayuda a observar la operación de IA",          desc: "Observabilidad, alertas y dashboards para mantener modelos y agentes bajo control continuo.",          time: "5 min" },
-  { cat: "Ciberseguridad", title: "Ciberseguridad aplicada a agentes y modelos de IA",                desc: "Hardening, cifrado, redes seguras y monitoreo 24/7 para proteger la infraestructura de IA.",          time: "6 min" },
-  { cat: "FDE",            title: "Qué es un Forward Deployed Engineer y por qué acelera la adopción",desc: "El rol que combina ingeniería, implementación y acompañamiento estratégico para escalar IA.",         time: "4 min" },
-  { cat: "Casos de uso",   title: "Cómo identificar casos de uso de IA con impacto real",             desc: "Marco para priorizar iniciativas de IA según valor, viabilidad y riesgo en entornos enterprise.",    time: "5 min" },
+  { cat: "Producto",       title: "De chatbot a operación IA: cómo escalar con control",              desc: "El camino desde un asistente básico hasta una plataforma de agentes gobernada y trazable.",            time: "4 min", dest: { kind: "page",   page: "producto" } },
+  { cat: "Soberanía IA",   title: "Soberanía de datos en IA empresarial",                             desc: "Cómo garantizar que el conocimiento corporativo no quede atrapado en proveedores externos.",           time: "5 min", dest: { kind: "page",   page: "independencia" } },
+  { cat: "AIOps",          title: "Qué es AIOps y cómo ayuda a observar la operación de IA",          desc: "Observabilidad, alertas y dashboards para mantener modelos y agentes bajo control continuo.",          time: "5 min", dest: { kind: "soon" } },
+  { cat: "Ciberseguridad", title: "Ciberseguridad aplicada a agentes y modelos de IA",                desc: "Hardening, cifrado, redes seguras y monitoreo 24/7 para proteger la infraestructura de IA.",          time: "6 min", dest: { kind: "detail", slug: "ciberseguridad" } },
+  { cat: "FDE",            title: "Qué es un Forward Deployed Engineer y por qué acelera la adopción",desc: "El rol que combina ingeniería, implementación y acompañamiento estratégico para escalar IA.",         time: "4 min", dest: { kind: "detail", slug: "forward-deployed-engineer" } },
+  { cat: "Casos de uso",   title: "Cómo identificar casos de uso de IA con impacto real",             desc: "Marco para priorizar iniciativas de IA según valor, viabilidad y riesgo en entornos enterprise.",    time: "5 min", dest: { kind: "soon" } },
 ];
 
 const TEMAS = [
-  { Icon: Shield,      title: "Gobierno IA",    desc: "Políticas, guardrails, roles, auditoría y supervisión.", col: B.magenta, bg: B.magentaSoft },
-  { Icon: Database,    title: "Soberanía IA",   desc: "Datos, modelos, portabilidad e independencia de proveedor.", col: B.purple,  bg: B.purpleSoft },
-  { Icon: Box,         title: "Arquitectura IA", desc: "Multi-modelo, RAG, MCP, workflows y operación modular.", col: B.sky,     bg: B.skySoft },
-  { Icon: Lock,        title: "Ciberseguridad",  desc: "Hardening, cifrado, monitoreo y seguridad enterprise.",  col: B.purple,  bg: B.purpleSoft },
-  { Icon: FileText,    title: "Casos de uso",    desc: "Aplicaciones por área: Legal, Finanzas, TI, RRHH y Operaciones.", col: B.sky, bg: B.skySoft },
+  { Icon: Shield,      title: "Gobierno IA",    desc: "Políticas, guardrails, roles, auditoría y supervisión.", col: B.magenta, bg: B.magentaSoft, dest: { kind: "filter", value: "Gobierno IA" } },
+  { Icon: Database,    title: "Soberanía IA",   desc: "Datos, modelos, portabilidad e independencia de proveedor.", col: B.purple,  bg: B.purpleSoft, dest: { kind: "filter", value: "Soberanía IA" } },
+  { Icon: Box,         title: "Arquitectura IA", desc: "Multi-modelo, RAG, MCP, workflows y operación modular.", col: B.sky,     bg: B.skySoft, dest: { kind: "page", page: "producto" } },
+  { Icon: Lock,        title: "Ciberseguridad",  desc: "Hardening, cifrado, monitoreo y seguridad enterprise.",  col: B.purple,  bg: B.purpleSoft, dest: { kind: "filter", value: "Ciberseguridad" } },
+  { Icon: FileText,    title: "Casos de uso",    desc: "Aplicaciones por área: Legal, Finanzas, TI, RRHH y Operaciones.", col: B.sky, bg: B.skySoft, dest: { kind: "filter", value: "Casos de uso" } },
 ];
 
 const GUIAS = [
-  { Icon: CheckCircle2, title: "Checklist para detectar Shadow AI",  desc: "Identifica herramientas de IA no gobernadas en tu organización antes de que se vuelvan críticas.", format: "Checklist", col: B.amber,   bg: B.amberSoft },
-  { Icon: FileText,     title: "Guía de gobierno para agentes IA",   desc: "Marco práctico para definir políticas, permisos, guardrails y auditoría sobre agentes.",           format: "Guía",      col: B.purple,  bg: B.purpleSoft },
-  { Icon: Workflow,     title: "Roadmap de adopción IA en 5 capas",  desc: "Ruta desde herramientas aisladas hasta una plataforma gobernada, soberana y escalable.",            format: "Roadmap",   col: B.magenta, bg: B.magentaSoft },
+  { Icon: CheckCircle2, title: "Checklist para detectar Shadow AI",  desc: "Identifica herramientas de IA no gobernadas en tu organización antes de que se vuelvan críticas.", format: "Checklist", col: B.amber,   bg: B.amberSoft, dest: { kind: "page", page: "shadowai" } },
+  { Icon: FileText,     title: "Guía de gobierno para agentes IA",   desc: "Marco práctico para definir políticas, permisos, guardrails y auditoría sobre agentes.",           format: "Guía",      col: B.purple,  bg: B.purpleSoft, dest: { kind: "page", page: "gobierno" } },
+  { Icon: Workflow,     title: "Roadmap de adopción IA en 5 capas",  desc: "Ruta desde herramientas aisladas hasta una plataforma gobernada, soberana y escalable.",            format: "Roadmap",   col: B.magenta, bg: B.magentaSoft, dest: { kind: "page", page: "producto" } },
 ];
+
+// ── Insight detail content (topics without a dedicated page) ─────────────────
+const INSIGHT_DETAILS: Record<string, {
+  cat: string; title: string; time: string; lead: string;
+  points: string[]; ctaPage: string; ctaLabel: string;
+}> = {
+  "ciberseguridad": {
+    cat: "Ciberseguridad", time: "6 min",
+    title: "Ciberseguridad aplicada a agentes y modelos de IA",
+    lead: "Hardening, cifrado, redes seguras y monitoreo 24/7 para proteger la infraestructura de IA.",
+    points: [
+      "Hardening de agentes y modelos frente a prompt injection y fugas de datos.",
+      "Cifrado de datos en tránsito y en reposo en toda la capa de operación de IA.",
+      "Redes y accesos segmentados entre agentes, sistemas y proveedores de modelos.",
+      "Monitoreo continuo 24/7 con alertas ante comportamiento anómalo.",
+    ],
+    ctaPage: "gobierno", ctaLabel: "Ver gobierno y guardrails",
+  },
+  "forward-deployed-engineer": {
+    cat: "FDE", time: "4 min",
+    title: "Qué es un Forward Deployed Engineer y por qué acelera la adopción",
+    lead: "El rol que combina ingeniería, implementación y acompañamiento estratégico para escalar IA.",
+    points: [
+      "Ingeniería: adapta la plataforma al contexto técnico real de cada cliente.",
+      "Implementación: acelera el paso de piloto a operación productiva.",
+      "Acompañamiento estratégico: conecta el uso de IA con objetivos de negocio.",
+    ],
+    ctaPage: "contacto", ctaLabel: "Hablar con el equipo KRNL",
+  },
+};
+
+function readInsightSlug(): string | null {
+  const h = window.location.hash.replace(/^#/, "");
+  const parts = h.split("/");
+  return parts[0] === "casos-de-uso" && parts[1] ? parts[1] : null;
+}
+function openInsightDetail(slug: string) {
+  window.location.hash = `casos-de-uso/${slug}`;
+  window.scrollTo({ top: 0 });
+}
+function closeInsightDetail() {
+  window.location.hash = "casos-de-uso";
+  window.scrollTo({ top: 0 });
+}
+
+// ── Insight detail view ────────────────────────────────────────────────────────
+function InsightDetailView({ data }: { data: typeof INSIGHT_DETAILS[string] }) {
+  const m = catMeta(data.cat);
+  return (
+    <section className="relative overflow-hidden pt-[104px] pb-20" style={{ background: B.surface }}>
+      <div className="max-w-[720px] mx-auto px-6 md:px-10">
+        <button onClick={closeInsightDetail}
+          className="inline-flex items-center gap-1.5 text-[13px] font-[600] mb-8 transition-all"
+          style={{ color: B.textSub, background: "none", border: "none", cursor: "pointer" }}>
+          <ArrowLeft className="w-4 h-4" strokeWidth={2} /> Volver a recursos
+        </button>
+        <span className="inline-block text-[10px] font-[800] px-2.5 py-1 rounded-full mb-4 tracking-[0.06em]"
+          style={{ background: m.bg, color: m.col }}>{data.cat}</span>
+        <h1 className="font-[800] leading-tight mb-4" style={{ fontSize: "clamp(24px, 3.2vw, 38px)", color: B.text }}>
+          {data.title}
+        </h1>
+        <span className="text-[12px] flex items-center gap-1.5 mb-8" style={{ color: B.textMuted }}>
+          <Clock className="w-3.5 h-3.5" strokeWidth={1.75} /> {data.time} lectura
+        </span>
+        <p className="text-[17px] leading-relaxed mb-8" style={{ color: B.textSub }}>{data.lead}</p>
+        <div className="flex flex-col gap-4 mb-10">
+          {data.points.map(p => (
+            <div key={p} className="flex items-start gap-3">
+              <CheckCircle2 className="w-4 h-4 shrink-0 mt-0.5" style={{ color: m.col }} strokeWidth={1.75} />
+              <p className="text-[14px] leading-relaxed" style={{ color: B.text }}>{p}</p>
+            </div>
+          ))}
+        </div>
+        <div className="pt-8" style={{ borderTop: `1px solid ${B.borderSoft}` }}>
+          <button onClick={() => krnlNavigate(data.ctaPage)}
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-full font-[600] text-white text-[14px] transition-all hover:scale-[1.02]"
+            style={{ background: GRAD, boxShadow: `0 6px 24px ${B.purple}38` }}>
+            {data.ctaLabel} <ArrowRight className="w-4 h-4" strokeWidth={2.2} />
+          </button>
+        </div>
+      </div>
+    </section>
+  );
+}
 
 // ── Hero editorial visual ──────────────────────────────────────────────────────
 function HeroEditorialVisual({ inV }: { inV: boolean }) {
@@ -207,7 +294,7 @@ function HeroInsights({ onExplorar, onCasos }: { onExplorar: () => void; onCasos
       <div className="absolute -top-16 left-1/2 -translate-x-1/2 w-[560px] h-[280px] pointer-events-none"
         style={{ background: `radial-gradient(ellipse, ${B.purpleSoft}70 0%, transparent 72%)`, filter: "blur(48px)" }} />
       <div className="relative z-10 max-w-[1200px] mx-auto px-10">
-        <div className="grid gap-16 items-center" style={{ gridTemplateColumns: "1fr 1fr" }}>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-center">
           {/* Left: content */}
           <div>
             <motion.div className="flex mb-5"
@@ -305,9 +392,15 @@ function SectionBuscador({ filter, setFilter, search, setSearch }: {
 // ── Featured card ──────────────────────────────────────────────────────────────
 function FeaturedCard({ art, i, inV }: { art: typeof FEATURED[0]; i: number; inV: boolean }) {
   const m = catMeta(art.cat);
+  const go = () => {
+    if (art.dest.kind === "page") krnlNavigate(art.dest.page);
+    else if (art.dest.kind === "detail") openInsightDetail(art.dest.slug);
+  };
   return (
     <motion.div
-      className="flex flex-col rounded-2xl overflow-hidden h-full"
+      role="button" tabIndex={0} onClick={go}
+      onKeyDown={e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); go(); } }}
+      className="flex flex-col rounded-2xl overflow-hidden h-full cursor-pointer"
       style={{ background: B.surface, border: `1px solid ${B.borderSoft}`, boxShadow: "0 4px 20px rgba(109,43,255,0.06)", transition: "box-shadow 0.2s, transform 0.2s" }}
       initial={{ opacity: 0, y: 20 }} animate={inV ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.55, delay: 0.15 + i * 0.12, ease }}
@@ -323,11 +416,9 @@ function FeaturedCard({ art, i, inV }: { art: typeof FEATURED[0]; i: number; inV
           <span className="text-[12px] flex items-center gap-1.5" style={{ color: B.textMuted }}>
             <Clock className="w-3.5 h-3.5" strokeWidth={1.75} /> {art.time} lectura
           </span>
-          <a href="#" className="inline-flex items-center gap-1.5 text-[13px] font-[700] no-underline"
-            style={{ color: m.col }}
-            onClick={e => e.preventDefault()}>
+          <span className="inline-flex items-center gap-1.5 text-[13px] font-[700]" style={{ color: m.col }}>
             Leer insight <ArrowRight className="w-3.5 h-3.5" strokeWidth={2.2} />
-          </a>
+          </span>
         </div>
       </div>
     </motion.div>
@@ -360,14 +451,21 @@ function SectionDestacados() {
 // ── Article card ───────────────────────────────────────────────────────────────
 function ArticleCard({ art, i, inV }: { art: typeof ARTICLES[0]; i: number; inV: boolean }) {
   const m = catMeta(art.cat);
+  const soon = art.dest.kind === "soon";
+  const go = () => {
+    if (art.dest.kind === "page") krnlNavigate(art.dest.page);
+    else if (art.dest.kind === "detail") openInsightDetail(art.dest.slug);
+  };
   return (
     <motion.div
-      className="flex flex-col rounded-xl overflow-hidden h-full"
-      style={{ background: B.surface, border: `1px solid ${B.borderSoft}`, boxShadow: "0 2px 12px rgba(0,0,0,0.04)", transition: "box-shadow 0.2s, transform 0.2s" }}
-      initial={{ opacity: 0, y: 16 }} animate={inV ? { opacity: 1, y: 0 } : {}}
+      role={soon ? undefined : "button"} tabIndex={soon ? undefined : 0} onClick={soon ? undefined : go}
+      onKeyDown={soon ? undefined : (e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); go(); } })}
+      className={`flex flex-col rounded-xl overflow-hidden h-full ${soon ? "" : "cursor-pointer"}`}
+      style={{ background: B.surface, border: `1px solid ${B.borderSoft}`, boxShadow: "0 2px 12px rgba(0,0,0,0.04)", transition: "box-shadow 0.2s, transform 0.2s", opacity: soon ? 0.72 : 1 }}
+      initial={{ opacity: 0, y: 16 }} animate={inV ? { opacity: soon ? 0.72 : 1, y: 0 } : {}}
       transition={{ duration: 0.48, delay: 0.08 + i * 0.1, ease }}
-      onMouseEnter={e => { (e.currentTarget as HTMLElement).style.boxShadow = "0 8px 32px rgba(109,43,255,0.12)"; (e.currentTarget as HTMLElement).style.transform = "translateY(-2px)"; }}
-      onMouseLeave={e => { (e.currentTarget as HTMLElement).style.boxShadow = "0 2px 12px rgba(0,0,0,0.04)"; (e.currentTarget as HTMLElement).style.transform = "none"; }}>
+      onMouseEnter={e => { if (soon) return; (e.currentTarget as HTMLElement).style.boxShadow = "0 8px 32px rgba(109,43,255,0.12)"; (e.currentTarget as HTMLElement).style.transform = "translateY(-2px)"; }}
+      onMouseLeave={e => { if (soon) return; (e.currentTarget as HTMLElement).style.boxShadow = "0 2px 12px rgba(0,0,0,0.04)"; (e.currentTarget as HTMLElement).style.transform = "none"; }}>
       <div className="h-1" style={{ background: `linear-gradient(90deg, ${m.col}, ${m.col}60)` }} />
       <div className="flex flex-col flex-1 p-5">
         <span className="inline-block text-[9px] font-[800] px-2 py-0.5 rounded-full mb-3 self-start"
@@ -378,10 +476,13 @@ function ArticleCard({ art, i, inV }: { art: typeof ARTICLES[0]; i: number; inV:
           <span className="text-[11px] flex items-center gap-1" style={{ color: B.textMuted }}>
             <Clock className="w-3 h-3" strokeWidth={1.75} /> {art.time}
           </span>
-          <a href="#" className="inline-flex items-center gap-1 text-[12px] font-[700] no-underline"
-            style={{ color: B.purple }} onClick={e => e.preventDefault()}>
-            Leer insight <ArrowRight className="w-3 h-3" strokeWidth={2.2} />
-          </a>
+          {soon ? (
+            <span className="text-[11px] font-[700]" style={{ color: B.textMuted }}>Próximamente</span>
+          ) : (
+            <span className="inline-flex items-center gap-1 text-[12px] font-[700]" style={{ color: B.purple }}>
+              Leer insight <ArrowRight className="w-3 h-3" strokeWidth={2.2} />
+            </span>
+          )}
         </div>
       </div>
     </motion.div>
@@ -450,7 +551,7 @@ function SectionGridInsights({ filter, search, onClear }: {
 }
 
 // ── Topics section ─────────────────────────────────────────────────────────────
-function SectionPorTemas() {
+function SectionPorTemas({ applyFilter }: { applyFilter: (f: string) => void }) {
   const ref = useRef<HTMLElement>(null);
   const inV = useInView(ref, { once: true, margin: "-80px" });
   return (
@@ -467,8 +568,14 @@ function SectionPorTemas() {
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
           {TEMAS.map((tema, i) => {
             const TIcon = tema.Icon;
+            const go = () => {
+              if (tema.dest.kind === "filter") applyFilter(tema.dest.value);
+              else if (tema.dest.kind === "page") krnlNavigate(tema.dest.page);
+            };
             return (
               <motion.div key={tema.title}
+                role="button" tabIndex={0} onClick={go}
+                onKeyDown={e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); go(); } }}
                 className="flex flex-col p-5 rounded-2xl cursor-pointer"
                 style={{ background: B.surface, border: `1px solid ${B.borderSoft}`, boxShadow: "0 2px 12px rgba(0,0,0,0.04)", transition: "all 0.2s" }}
                 initial={{ opacity: 0, y: 16 }} animate={inV ? { opacity: 1, y: 0 } : {}}
@@ -531,6 +638,7 @@ function CTAIntermedio() {
 // ── Guide card ─────────────────────────────────────────────────────────────────
 function GuiaCard({ guia, i, inV }: { guia: typeof GUIAS[0]; i: number; inV: boolean }) {
   const GIcon = guia.Icon;
+  const go = () => { if (guia.dest.kind === "page") krnlNavigate(guia.dest.page); };
   return (
     <motion.div
       className="flex flex-col p-6 rounded-2xl"
@@ -552,7 +660,7 @@ function GuiaCard({ guia, i, inV }: { guia: typeof GUIAS[0]; i: number; inV: boo
       <p className="text-[13px] leading-relaxed flex-1 mb-5" style={{ color: B.textSub }}>{guia.desc}</p>
       <button className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg text-[13px] font-[700] transition-all hover:scale-[1.02] self-start"
         style={{ background: guia.bg, color: guia.col, border: `1.5px solid ${guia.col}25` }}
-        onClick={e => e.preventDefault()}>
+        onClick={go}>
         Ver guía <ArrowRight className="w-3.5 h-3.5" strokeWidth={2.2} />
       </button>
     </motion.div>
@@ -629,6 +737,13 @@ function CTAFinalInsights() {
 export default function PaginaInsightsIA() {
   const [filter, setFilter] = useState("Todos");
   const [search, setSearch] = useState("");
+  const [activeSlug, setActiveSlug] = useState<string | null>(() => readInsightSlug());
+
+  useEffect(() => {
+    const h = () => setActiveSlug(readInsightSlug());
+    window.addEventListener("hashchange", h);
+    return () => window.removeEventListener("hashchange", h);
+  }, []);
 
   const clearAll = () => { setFilter("Todos"); setSearch(""); };
   const scrollToGuias = () => { setTimeout(() => document.getElementById("insights-guias")?.scrollIntoView({ behavior: "smooth" }), 80); };
@@ -637,13 +752,23 @@ export default function PaginaInsightsIA() {
     setTimeout(() => document.getElementById("insights-grid")?.scrollIntoView({ behavior: "smooth" }), 80);
   };
 
+  const detail = activeSlug ? INSIGHT_DETAILS[activeSlug] : null;
+  if (detail) {
+    return (
+      <div style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
+        <InsightDetailView data={detail} />
+        <KrnlFooter />
+      </div>
+    );
+  }
+
   return (
     <div style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
       <HeroInsights onExplorar={scrollToGuias} onCasos={() => applyFilter("Casos de uso")} />
       <SectionBuscador filter={filter} setFilter={setFilter} search={search} setSearch={setSearch} />
       <SectionDestacados />
       <SectionGridInsights filter={filter} search={search} onClear={clearAll} />
-      <SectionPorTemas />
+      <SectionPorTemas applyFilter={applyFilter} />
       <CTAIntermedio />
       <SectionGuias />
       <CTAFinalInsights />

@@ -4,6 +4,7 @@ import {
   ArrowRight, ChevronRight, Scale, BrainCircuit, Box, Database, Lock, Users, Kanban, Workflow,
   Shield, CheckCircle2, FileText, Activity, Eye, EyeOff, ShieldOff, AlertTriangle,
   TrendingUp, Boxes, Link2, Menu, X,
+  MinusCircle, Sparkles, ShieldAlert, ShieldCheck, BarChart3, Search, Layers, User, UserCog, Rocket, Share2,
 } from "lucide-react";
 import { ImageWithFallback } from "@/app/components/figma/ImageWithFallback";
 import krnlLogo      from "@/imports/krnl-logo-dark.png";
@@ -17,6 +18,16 @@ import PaginaContacto from "./Contacto";
 import PaginaInsightsIA from "./InsightsIA";
 import KrnlFooter from "./KrnlFooter";
 import MobileTabletHero from "./MobileTabletHero";
+import { krnlNavigate, hashToPage, type PageKey } from "./navigate";
+
+const NAV_ITEM_TO_PAGE: Record<string, PageKey> = {
+  "Inicio": "home", "Riesgos": "shadowai", "Producto": "producto",
+  "Gobierno": "gobierno", "Soberanía IA": "independencia", "Casos de uso": "insights",
+};
+const PAGE_TO_NAV_ITEM: Record<PageKey, string> = {
+  home: "Inicio", shadowai: "Riesgos", producto: "Producto",
+  gobierno: "Gobierno", independencia: "Soberanía IA", insights: "Casos de uso", contacto: "",
+};
 
 // ── Brand tokens ──────────────────────────────────────────────────────────────
 export const B = {
@@ -24,7 +35,7 @@ export const B = {
   magenta:     "#D4009A",
   text:        "#0D1524",
   textSub:     "#5B657A",
-  textMuted:   "#9AA5B8",
+  textMuted:   "#7A86A3",
   surface:     "#FFFFFF",
   softBg:      "#F7F8FA",
   border:      "#E7E1EC",
@@ -104,7 +115,7 @@ const STEPS = [
   { num: "03", title: "Gobierno",      desc: "KRNL aplica políticas, validaciones, auditoría y control humano." },
   { num: "04", title: "Escala segura", desc: "IA operando con visibilidad, seguridad y control empresarial." },
 ];
-const STEP_TARGETS = [0, 0.32, 0.60, 0.88];
+const STEP_TARGETS = [0, 0.21, 0.39, 0.56];
 
 // ── Strategic constellation background ───────────────────────────────────────
 function ConstellationBg() {
@@ -377,9 +388,9 @@ export default function App() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [bounds, setBounds]       = useState({ start: 0, end: 4000 });
   const [step, setStep]           = useState(0);
-  const [activeNav, setActiveNav] = useState("Inicio");
+  const [page, setPage]           = useState<PageKey>(() => hashToPage(window.location.hash));
+  const [activeNav, setActiveNav] = useState(() => PAGE_TO_NAV_ITEM[hashToPage(window.location.hash)]);
   const [scrolled, setScrolled]  = useState(false);
-  const [page, setPage]           = useState<"home" | "producto" | "independencia" | "shadowai" | "gobierno" | "contacto" | "insights">("home");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
@@ -406,19 +417,14 @@ export default function App() {
   }, [mobileMenuOpen]);
 
   useEffect(() => {
-    const PAGE_TO_NAV: Record<string, string> = {
-      producto: "Producto", independencia: "Soberanía IA",
-      shadowai: "Riesgos",  gobierno: "Gobierno",
-      contacto: "", insights: "Casos de uso",
-    };
-    const handler = (e: Event) => {
-      const dest = (e as CustomEvent<string>).detail;
-      setPage(dest as Parameters<typeof setPage>[0]);
-      setActiveNav(PAGE_TO_NAV[dest] ?? "");
+    const handler = () => {
+      const dest = hashToPage(window.location.hash);
+      setPage(dest);
+      setActiveNav(PAGE_TO_NAV_ITEM[dest] ?? "");
       window.scrollTo({ top: 0 });
     };
-    window.addEventListener("krnl:navigate", handler);
-    return () => window.removeEventListener("krnl:navigate", handler);
+    window.addEventListener("hashchange", handler);
+    return () => window.removeEventListener("hashchange", handler);
   }, []);
 
   const { scrollY } = useScroll();
@@ -426,10 +432,12 @@ export default function App() {
 
   useEffect(() => {
     const unsub = scrollYProgress.on("change", (v) => {
-      if      (v < 0.25) setStep(0);
-      else if (v < 0.52) setStep(1);
-      else if (v < 0.78) setStep(2);
-      else               setStep(3);
+      // Step 04 ("Escala segura") keeps a much longer dwell range so the
+      // sticky hero doesn't release into the next section before it's read.
+      if      (v < 0.163) setStep(0);
+      else if (v < 0.339) setStep(1);
+      else if (v < 0.509) setStep(2);
+      else                setStep(3);
     });
     return unsub;
   }, [scrollYProgress]);
@@ -478,8 +486,8 @@ export default function App() {
               const isActive = activeNav === item;
               return (
                 <a key={item} href="#"
-                  onClick={(e) => { e.preventDefault(); setActiveNav(item); setPage(item === "Producto" ? "producto" : item === "Soberanía IA" ? "independencia" : item === "Riesgos" ? "shadowai" : item === "Gobierno" ? "gobierno" : item === "Casos de uso" ? "insights" : "home"); window.scrollTo({ top: 0 }); }}
-                  className="px-4 py-2 text-[14px] rounded-full transition-all duration-200"
+                  onClick={(e) => { e.preventDefault(); krnlNavigate(NAV_ITEM_TO_PAGE[item] ?? "home"); }}
+                  className="px-3 lg:px-4 py-2 text-[14px] rounded-full transition-all duration-200"
                   style={{ color: isActive ? B.magenta : B.textSub, background: isActive ? B.magentaSoft : "transparent", fontWeight: isActive ? 500 : 400 }}
                   onMouseEnter={(e) => { e.currentTarget.style.color = B.magenta; e.currentTarget.style.background = B.magentaSoft; }}
                   onMouseLeave={(e) => { e.currentTarget.style.color = isActive ? B.magenta : B.textSub; e.currentTarget.style.background = isActive ? B.magentaSoft : "transparent"; }}>
@@ -491,9 +499,9 @@ export default function App() {
           {/* CTA — right */}
           <div className="flex items-center justify-end">
             <button
-              className="hidden md:inline-flex items-center gap-1.5 px-5 py-2.5 rounded-full text-[14px] font-[600] text-white transition-all hover:scale-[1.02] active:scale-[0.98]"
+              className="hidden md:inline-flex items-center gap-1.5 px-4 lg:px-5 py-2.5 rounded-full text-[14px] font-[600] text-white whitespace-nowrap shrink-0 transition-all hover:scale-[1.02] active:scale-[0.98]"
               style={{ background: GRAD, boxShadow: `0 4px 16px ${B.purple}40` }}
-              onClick={() => { setActiveNav(""); setPage("contacto"); window.scrollTo({ top: 0 }); }}>
+              onClick={() => krnlNavigate("contacto")}>
               Conoce KRNL <ArrowRight className="w-4 h-4" />
             </button>
             <button
@@ -522,9 +530,7 @@ export default function App() {
                     onClick={(e) => {
                       e.preventDefault();
                       setMobileMenuOpen(false);
-                      setActiveNav(item);
-                      setPage(item === "Producto" ? "producto" : item === "Soberanía IA" ? "independencia" : item === "Riesgos" ? "shadowai" : item === "Gobierno" ? "gobierno" : item === "Casos de uso" ? "insights" : "home");
-                      window.scrollTo({ top: 0 });
+                      krnlNavigate(NAV_ITEM_TO_PAGE[item] ?? "home");
                     }}>
                     {item}
                   </a>
@@ -534,7 +540,7 @@ export default function App() {
                 <button
                   className="w-full inline-flex items-center justify-center gap-2 px-5 py-3 rounded-full text-[15px] font-[600] text-white"
                   style={{ background: GRAD, boxShadow: `0 4px 16px ${B.purple}40`, minHeight: 44 }}
-                  onClick={() => { setMobileMenuOpen(false); setActiveNav(""); setPage("contacto"); window.scrollTo({ top: 0 }); }}>
+                  onClick={() => { setMobileMenuOpen(false); krnlNavigate("contacto"); }}>
                   Conoce KRNL <ArrowRight className="w-4 h-4" />
                 </button>
               </div>
@@ -553,7 +559,7 @@ export default function App() {
       {page === "home" && <>
       {/* ── Mobile/tablet hero — replaces the scroll-jacking desktop hero below lg ── */}
       <MobileTabletHero
-        onCTAClick={() => { setActiveNav(""); setPage("contacto"); window.scrollTo({ top: 0 }); }}
+        onCTAClick={() => krnlNavigate("contacto")}
       />
 
       {/* ── Desktop hero (scroll story) — lg and up only ─────────────────────── */}
@@ -561,7 +567,8 @@ export default function App() {
       <motion.div className="fixed top-0 left-0 h-[2px] z-50" style={{ width: progressW, background: GRAD }} />
 
       {/* ── Scroll story ──────────────────────────────────────────────────── */}
-      <div ref={scrollRef} style={{ height: "400vh" }}>
+      {/* Extra height vs. the original 400vh is dwell time for step 04 only — steps 01-03 keep their original scroll length. */}
+      <div ref={scrollRef} style={{ height: "560vh" }}>
         <div className="sticky top-0 h-screen flex flex-col overflow-hidden">
 
           {/* Atmosphere layer — KRNL brand particles */}
@@ -817,6 +824,15 @@ export default function App() {
       </div>
 
       {/* ── Home sections ─────────────────────────────────────────────────── */}
+      {/* Shared gradient def for Home icons (.home-icon-gradient) */}
+      <svg style={{ position: "absolute", width: 0, height: 0, overflow: "hidden" }} aria-hidden="true">
+        <defs>
+          <linearGradient id="krnlIconGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#D4009A" />
+            <stop offset="100%" stopColor="#6D2BFF" />
+          </linearGradient>
+        </defs>
+      </svg>
       <SectionQueEs />
       <SectionParaQuien />
       <SectionAutonomia />
@@ -1087,15 +1103,6 @@ function SectionParaQuien() {
             Diseñado para equipos<br />que operan IA.
           </h2>
         </motion.div>
-        {/* Shared gradient def for card icons */}
-        <svg style={{ position: "absolute", width: 0, height: 0, overflow: "hidden" }} aria-hidden="true">
-          <defs>
-            <linearGradient id="krnlIconGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#D4009A" />
-              <stop offset="100%" stopColor="#6D2BFF" />
-            </linearGradient>
-          </defs>
-        </svg>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
           {profiles.map(({ Icon, role, desc }, i) => (
             <motion.div key={role}
@@ -1104,9 +1111,7 @@ function SectionParaQuien() {
               initial={{ opacity: 0, y: 20 }} animate={inV ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
               transition={{ duration: 0.65, delay: 0.18 + i * 0.13, ease }}
               whileHover={{ y: -2, boxShadow: "0 8px 32px rgba(109,43,255,0.10), 0 2px 8px rgba(109,43,255,0.05)", borderColor: "rgba(109,43,255,0.18)", transition: { duration: 0.22, ease: "easeOut" } }}>
-              <Icon className="w-[34px] h-[34px] mb-5"
-                style={{ stroke: "url(#krnlIconGrad)", color: "transparent", display: "block" }}
-                strokeWidth={1.4} />
+              <Icon className="w-8 h-8 mb-5 home-icon-gradient" />
               <p className="text-[15px] font-[800] mb-2" style={{ color: "#0F2870" }}>{role}</p>
               <p className="text-[13px] leading-relaxed" style={{ color: "#6B7894" }}>{desc}</p>
               <div className="mt-5 h-px rounded-full overflow-hidden" style={{ background: "#EDE8F5" }}>
@@ -1128,34 +1133,37 @@ function SectionBeneficios() {
   const sRef = useRef<HTMLElement>(null);
   const inV  = useInView(sRef, { once: true, margin: "-80px" });
   const ease = [0.2, 0, 0.2, 1] as const;
-  const benefits = [
-    { Icon: Shield,      title: "Menos riesgo operativo",                 desc: "Toda acción de IA pasa por validación antes de ejecutarse. Sin excepciones ni bypasses." },
-    { Icon: FileText,    title: "Trazabilidad completa",                  desc: "Registro inmutable de cada decisión, respuesta y flujo ejecutado por cualquier agente." },
-    { Icon: Eye,         title: "Control humano configurable",            desc: "Define en qué pasos interviene una persona y en cuáles la IA puede operar autónomamente." },
-    { Icon: Link2,       title: "Independencia de herramientas aisladas", desc: "KRNL opera sobre lo que ya existe. No reemplaza sistemas, los conecta y los gobierna." },
-    { Icon: TrendingUp,  title: "IA lista para escalar",                  desc: "Más flujos, más agentes, más volumen — sin perder gobernabilidad ni crear deuda operativa." },
+  const rows = [
+    { sin: { Icon: ShieldAlert, t: "Acciones sin validación" },      con: { Icon: ShieldCheck, t: "Reglas antes de ejecutar" },       resultado: { Icon: BarChart3, t: "Menos riesgo operativo" } },
+    { sin: { Icon: EyeOff,      t: "Decisiones invisibles" },        con: { Icon: FileText,    t: "Registro completo" },              resultado: { Icon: Search,    t: "Trazabilidad total" } },
+    { sin: { Icon: Users,       t: "Uso aislado por áreas" },        con: { Icon: Layers,      t: "Capa común de gobierno" },          resultado: { Icon: Link2,     t: "Menos dependencia" } },
+    { sin: { Icon: User,        t: "Supervisión manual informal" },  con: { Icon: UserCog,     t: "Control humano configurable" },     resultado: { Icon: ShieldCheck, t: "Mayor confianza" } },
+    { sin: { Icon: TrendingUp,  t: "Pilotos difíciles de escalar" }, con: { Icon: Share2,      t: "Flujos gobernados" },               resultado: { Icon: Rocket,    t: "IA lista para crecer" } },
   ];
-  const renderBenefit = ({ Icon, title, desc }: typeof benefits[0], i: number) => (
-    <motion.div key={title} className="flex gap-5 py-5 px-3 rounded-xl"
-      style={{ borderTop: `1px solid ${B.border}` }}
-      initial={{ opacity: 0, y: 12 }} animate={inV ? { opacity: 1, y: 0 } : { opacity: 0, y: 12 }}
-      transition={{ duration: 0.55, delay: 0.18 + i * 0.10, ease }}
-      whileHover={{ background: B.purpleSoft, transition: { duration: 0.15 } }}>
-      <div className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0 mt-0.5"
-        style={{ background: `linear-gradient(135deg, ${B.purpleSoft}, ${B.magentaSoft})`, border: `1px solid ${B.border}` }}>
-        <Icon className="w-3.5 h-3.5" style={{ color: B.purple }} strokeWidth={1.75} />
+  const Cell = ({ Icon, text, badgeBg, iconC, textC, weight }: { Icon: ElementType; text: string; badgeBg: string; iconC: string; textC: string; weight: number }) => (
+    <div className="flex items-center gap-3 px-6 py-4">
+      <div className="w-11 h-11 rounded-full flex items-center justify-center shrink-0" style={{ background: badgeBg }}>
+        <Icon className="w-5 h-5" style={{ color: iconC }} strokeWidth={1.8} />
       </div>
-      <div className="flex-1">
-        <p className="text-[14px] font-[700] mb-1" style={{ color: B.text }}>{title}</p>
-        <p className="text-[13px] leading-relaxed" style={{ color: B.textSub }}>{desc}</p>
+      <p className="text-[14px] leading-snug" style={{ color: textC, fontWeight: weight }}>{text}</p>
+    </div>
+  );
+  const CellMobile = ({ Icon, label, text, badgeBg, iconC, labelC, textC, weight }: { Icon: ElementType; label: string; text: string; badgeBg: string; iconC: string; labelC: string; textC: string; weight: number }) => (
+    <div className="flex items-center gap-3">
+      <div className="w-10 h-10 rounded-full flex items-center justify-center shrink-0" style={{ background: badgeBg }}>
+        <Icon className="w-[18px] h-[18px]" style={{ color: iconC }} strokeWidth={1.8} />
       </div>
-    </motion.div>
+      <div>
+        <p className="text-[10px] font-[700] uppercase tracking-[0.08em] mb-0.5" style={{ color: labelC }}>{label}</p>
+        <p className="text-[14px] leading-snug" style={{ color: textC, fontWeight: weight }}>{text}</p>
+      </div>
+    </div>
   );
   return (
     <section ref={sRef} style={{ background: B.surface, borderTop: `1px solid ${B.border}` }}>
       <div className="max-w-[1200px] mx-auto px-5 md:px-10 py-16 md:py-28">
         {/* Header centrado */}
-        <motion.div style={{ textAlign: "center", maxWidth: 520, margin: "0 auto 64px" }}
+        <motion.div style={{ textAlign: "center", maxWidth: 560, margin: "0 auto 56px" }}
           initial={{ opacity: 0, y: 14 }} animate={inV ? { opacity: 1, y: 0 } : { opacity: 0, y: 14 }}
           transition={{ duration: 0.72, ease }}>
           <SectionMarker label="Beneficios" />
@@ -1163,20 +1171,69 @@ function SectionBeneficios() {
             Qué gana<br />tu organización.
           </h2>
           <p className="text-[16px] leading-relaxed" style={{ color: B.textSub }}>
-            Operar IA sin gobierno es un pasivo. KRNL convierte ese pasivo en activo operativo.
+            KRNL transforma IA dispersa en una operación gobernada, trazable y lista para escalar.
           </p>
         </motion.div>
-        {/* Beneficios: 2 columnas iguales */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-14">
-          <div>
-            {benefits.slice(0, 3).map((b, i) => renderBenefit(b, i))}
-            <div style={{ borderTop: `1px solid ${B.border}` }} />
+
+        {/* ── Matriz comparativa — desktop / tablet ── */}
+        <motion.div className="hidden md:block rounded-2xl overflow-hidden"
+          style={{ border: `1px solid ${B.border}`, boxShadow: "0 8px 32px rgba(109,43,255,0.08)" }}
+          initial={{ opacity: 0, y: 18 }} animate={inV ? { opacity: 1, y: 0 } : { opacity: 0, y: 18 }}
+          transition={{ duration: 0.65, delay: 0.15, ease }}>
+          <div className="grid grid-cols-3">
+            <div className="flex items-center justify-center gap-2 px-6 py-5" style={{ background: B.softBg, borderBottom: `1px solid ${B.border}` }}>
+              <MinusCircle className="w-[18px] h-[18px]" style={{ color: B.textSub }} strokeWidth={2} />
+              <span className="text-[13px] font-[800] tracking-[0.04em]" style={{ color: B.text }}>SIN KRNL</span>
+            </div>
+            <div className="flex items-center justify-center gap-2 px-6 py-5" style={{ background: B.magentaSoft, borderBottom: `1px solid ${B.border}` }}>
+              <Sparkles className="w-[18px] h-[18px]" style={{ color: B.magenta }} strokeWidth={2} />
+              <span className="text-[13px] font-[800] tracking-[0.04em]" style={{ color: B.magenta }}>CON KRNL</span>
+            </div>
+            <div className="flex items-center justify-center gap-2 px-6 py-5" style={{ background: B.purpleSoft, borderBottom: `1px solid ${B.border}` }}>
+              <CheckCircle2 className="w-[18px] h-[18px]" style={{ color: B.purple }} strokeWidth={2} />
+              <span className="text-[13px] font-[800] tracking-[0.04em]" style={{ color: B.purple }}>RESULTADO</span>
+            </div>
           </div>
-          <div>
-            {benefits.slice(3).map((b, i) => renderBenefit(b, i + 3))}
-            <div style={{ borderTop: `1px solid ${B.border}` }} />
-          </div>
+          {rows.map((row, i) => (
+            <motion.div key={row.resultado.t} className="grid grid-cols-3"
+              style={{ borderTop: i > 0 ? `1px solid ${B.borderSoft}` : "none" }}
+              initial={{ opacity: 0 }} animate={inV ? { opacity: 1 } : { opacity: 0 }}
+              transition={{ duration: 0.45, delay: 0.30 + i * 0.08 }}>
+              <Cell Icon={row.sin.Icon} text={row.sin.t} badgeBg={B.softBg} iconC={B.textSub} textC={B.textSub} weight={400} />
+              <Cell Icon={row.con.Icon} text={row.con.t} badgeBg={B.magentaSoft} iconC={B.magenta} textC={B.text} weight={400} />
+              <Cell Icon={row.resultado.Icon} text={row.resultado.t} badgeBg={B.purpleSoft} iconC={B.purple} textC={B.text} weight={600} />
+            </motion.div>
+          ))}
+        </motion.div>
+
+        {/* ── Cards apiladas por fila — mobile ── */}
+        <div className="md:hidden flex flex-col gap-4">
+          {rows.map((row, i) => (
+            <motion.div key={row.resultado.t} className="rounded-2xl p-5 flex flex-col gap-4"
+              style={{ background: B.surface, border: `1px solid ${B.border}`, boxShadow: "0 2px 12px rgba(109,43,255,0.05)" }}
+              initial={{ opacity: 0, y: 14 }} animate={inV ? { opacity: 1, y: 0 } : { opacity: 0, y: 14 }}
+              transition={{ duration: 0.5, delay: 0.15 + i * 0.09, ease }}>
+              <CellMobile Icon={row.sin.Icon} label="Sin KRNL" text={row.sin.t} badgeBg={B.softBg} iconC={B.textSub} labelC={B.textMuted} textC={B.textSub} weight={400} />
+              <CellMobile Icon={row.con.Icon} label="Con KRNL" text={row.con.t} badgeBg={B.magentaSoft} iconC={B.magenta} labelC={B.magenta} textC={B.text} weight={400} />
+              <CellMobile Icon={row.resultado.Icon} label="Resultado" text={row.resultado.t} badgeBg={B.purpleSoft} iconC={B.purple} labelC={B.purple} textC={B.text} weight={600} />
+            </motion.div>
+          ))}
         </div>
+
+        {/* ── Tagline de cierre ── */}
+        <motion.div className="flex flex-col items-center"
+          initial={{ opacity: 0 }} animate={inV ? { opacity: 1 } : { opacity: 0 }}
+          transition={{ duration: 0.6, delay: 0.75 }}>
+          <div style={{ width: 220, height: 1, background: B.borderSoft, marginTop: 40, marginBottom: 28 }} />
+          <div className="flex items-center gap-3 px-4 text-center">
+            <div className="w-9 h-9 rounded-full flex items-center justify-center shrink-0" style={{ background: B.magentaSoft }}>
+              <Sparkles className="w-4 h-4" style={{ color: B.magenta }} strokeWidth={2} />
+            </div>
+            <p className="text-[15px] leading-relaxed text-left" style={{ color: B.textSub }}>
+              Menos riesgo, más control, mayor claridad y una IA que <span style={{ color: B.magenta, fontWeight: 700 }}>escala contigo</span>.
+            </p>
+          </div>
+        </motion.div>
       </div>
     </section>
   );
@@ -1292,7 +1349,7 @@ function SectionAutonomia() {
               {items.map(({ Icon, name, desc }, i) => (
                 <div key={name} style={{ display: "flex", alignItems: "center", gap: 20, padding: "22px 28px", borderBottom: i < items.length - 1 ? "1px solid rgba(109,43,255,0.09)" : "none", position: "relative", zIndex: 1 }}>
                   <div style={{ width: 48, height: 48, borderRadius: "50%", flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(255,255,255,0.95)", border: "1px solid rgba(109,43,255,0.16)", boxShadow: "0 2px 12px rgba(109,43,255,0.10)", position: "relative", zIndex: 2 }}>
-                    <Icon className="w-[22px] h-[22px]" style={{ color: B.purple }} strokeWidth={1.55} />
+                    <Icon className="w-7 h-7 home-icon-gradient" />
                   </div>
                   <div>
                     <p style={{ fontSize: 15, fontWeight: 700, color: "#0F2870", lineHeight: 1.2, margin: 0 }}>{name}</p>
@@ -1335,14 +1392,6 @@ function SectionIndependencia() {
           </p>
         </motion.div>
         {/* Proof points — 3-col glass cards */}
-        <svg style={{ position: "absolute", width: 0, height: 0, overflow: "hidden" }} aria-hidden="true">
-          <defs>
-            <linearGradient id="krnlIndepGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#D4009A" />
-              <stop offset="100%" stopColor="#6D2BFF" />
-            </linearGradient>
-          </defs>
-        </svg>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {proofs.map(({ Icon, title, desc }, i) => (
             <motion.div key={title}
@@ -1353,9 +1402,7 @@ function SectionIndependencia() {
               whileHover={{ y: -4, boxShadow: `0 12px 32px rgba(109,43,255,0.12)`, transition: { duration: 0.2 } }}>
               <div className="absolute -top-6 -right-6 w-20 h-20 rounded-full pointer-events-none"
                 style={{ background: `radial-gradient(circle, ${B.magenta}0E 0%, transparent 70%)` }} />
-              <Icon className="w-[22px] h-[22px] mb-4 block"
-                style={{ stroke: "url(#krnlIndepGrad)", color: "transparent" }}
-                strokeWidth={1.6} />
+              <Icon className="w-8 h-8 mb-4 home-icon-gradient" />
               <p className="text-[15px] font-[700] mb-2" style={{ color: B.text }}>{title}</p>
               <p className="text-[13px] leading-relaxed" style={{ color: B.textSub }}>{desc}</p>
             </motion.div>
@@ -1496,7 +1543,7 @@ function PillarCard({ Icon, title, desc, delay, inView, chip }: {
       <div className="flex items-start justify-between mb-4">
         <div className="w-9 h-9 rounded-xl flex items-center justify-center"
           style={{ background: `linear-gradient(135deg, ${B.purpleSoft}, ${B.magentaSoft})`, border: `1px solid ${B.border}` }}>
-          <Icon className="w-4 h-4" style={{ color: B.purple }} strokeWidth={1.75} />
+          <Icon className="w-6 h-6 home-icon-gradient" />
         </div>
         {chip && (
           <span className="text-[9px] px-2 py-0.5 rounded-full font-[600]"
@@ -1605,7 +1652,7 @@ function SectionGobierno() {
               <div className="flex items-start justify-between mb-4">
                 <div className="w-9 h-9 rounded-xl flex items-center justify-center"
                   style={{ background: `linear-gradient(135deg, ${B.purpleSoft}, ${B.magentaSoft})`, border: `1px solid ${B.border}` }}>
-                  <Icon className="w-4 h-4" style={{ color: B.purple }} strokeWidth={1.75} />
+                  <Icon className="w-6 h-6 home-icon-gradient" />
                 </div>
                 <span className="text-[9px] px-2.5 py-1 rounded-full font-[700]"
                   style={{ background: `${chipC}15`, color: chipC }}>{chip}</span>

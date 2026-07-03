@@ -185,3 +185,11 @@
     line-height: 1.5;
   }
 }
+
+/* KRNL Home — shared decorative/functional icon treatment (magenta → violeta gradient) */
+.home-icon-gradient {
+  stroke: url(#krnlIconGrad);
+  color: transparent;
+  stroke-width: 1.5;
+  display: block;
+}

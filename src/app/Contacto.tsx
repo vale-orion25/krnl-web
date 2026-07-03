@@ -87,7 +87,7 @@ function FormContacto({ onSend }: { onSend: () => void }) {
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-5">
       {/* Nombre + Email */}
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
           <label className="block text-[12px] font-[600] mb-1.5" style={{ color: B.textSub }}>Nombre completo *</label>
           <input required value={form.nombre} onChange={set("nombre")} placeholder="Tu nombre"
@@ -101,7 +101,7 @@ function FormContacto({ onSend }: { onSend: () => void }) {
       </div>
 
       {/* Empresa + Cargo */}
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
           <label className="block text-[12px] font-[600] mb-1.5" style={{ color: B.textSub }}>Empresa / Organización *</label>
           <input required value={form.empresa} onChange={set("empresa")} placeholder="Nombre de tu organización"
@@ -232,8 +232,8 @@ function SectionFormulario() {
 
   return (
     <section ref={ref} style={{ background: B.softBg, borderTop: `1px solid ${B.border}` }}>
-      <div className="max-w-[1200px] mx-auto px-10 py-16">
-        <div className="grid gap-10" style={{ gridTemplateColumns: "1fr 380px", alignItems: "start" }}>
+      <div className="max-w-[1200px] mx-auto px-5 md:px-10 py-12 md:py-16">
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-8 lg:gap-10 items-start">
 
           {/* Form card */}
           <motion.div className="rounded-2xl overflow-hidden"
