@@ -1,0 +1,157 @@
+/*
+  SectionBackground — fondos animados sutiles (solo CSS, sin SVG).
+  Decorativo únicamente: pointer-events: none y opacidades bajas para
+  nunca competir con texto, cards ni CTAs.
+*/
+
+.krnl-section-bg {
+  --krnl-pink: 212, 0, 154;    /* #D4009A */
+  --krnl-violet: 109, 43, 255; /* #6D2BFF */
+  --krnl-blue: 15, 40, 112;    /* #0F2870 */
+
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.krnl-section-bg__layer {
+  position: absolute;
+  inset: -12%;
+  background-repeat: no-repeat;
+}
+
+/* ─── riesgos — red / nodos sutiles ──────────────────────────────── */
+.krnl-bg-riesgos .krnl-section-bg__layer--dots {
+  background-image:
+    radial-gradient(circle at 10% 18%, rgba(var(--krnl-pink), 0.11) 0, rgba(var(--krnl-pink), 0.11) 2.5px, transparent 4px),
+    radial-gradient(circle at 82% 12%, rgba(var(--krnl-violet), 0.10) 0, rgba(var(--krnl-violet), 0.10) 2.5px, transparent 4px),
+    radial-gradient(circle at 32% 58%, rgba(var(--krnl-violet), 0.09) 0, rgba(var(--krnl-violet), 0.09) 2px, transparent 3.5px),
+    radial-gradient(circle at 92% 66%, rgba(var(--krnl-pink), 0.10) 0, rgba(var(--krnl-pink), 0.10) 2.5px, transparent 4px),
+    radial-gradient(circle at 58% 88%, rgba(var(--krnl-violet), 0.08) 0, rgba(var(--krnl-violet), 0.08) 2px, transparent 3.5px),
+    radial-gradient(circle at 14% 92%, rgba(var(--krnl-pink), 0.07) 0, rgba(var(--krnl-pink), 0.07) 2px, transparent 3.5px);
+  animation: krnl-drift-a 36s ease-in-out infinite;
+}
+.krnl-bg-riesgos .krnl-section-bg__layer--dots-b {
+  background-image:
+    radial-gradient(circle at 48% 24%, rgba(var(--krnl-pink), 0.07) 0, rgba(var(--krnl-pink), 0.07) 2px, transparent 3.5px),
+    radial-gradient(circle at 70% 46%, rgba(var(--krnl-violet), 0.08) 0, rgba(var(--krnl-violet), 0.08) 2px, transparent 3.5px),
+    radial-gradient(circle at 22% 76%, rgba(var(--krnl-pink), 0.06) 0, rgba(var(--krnl-pink), 0.06) 2px, transparent 3.5px);
+  animation: krnl-drift-b 42s ease-in-out infinite;
+  animation-delay: -8s;
+}
+.krnl-bg-riesgos .krnl-section-bg__layer--lines {
+  background-image:
+    linear-gradient(115deg, transparent 42%, rgba(var(--krnl-violet), 0.05) 50%, transparent 58%),
+    linear-gradient(250deg, transparent 44%, rgba(var(--krnl-pink), 0.045) 52%, transparent 60%);
+  background-size: 160% 160%;
+  animation: krnl-sweep-pendulum 30s ease-in-out infinite;
+}
+
+/* ─── producto — ondas / puntos suaves ───────────────────────────── */
+.krnl-bg-producto .krnl-section-bg__layer--dotgrid {
+  inset: -6%;
+  background-repeat: repeat;
+  background-image: radial-gradient(circle, rgba(var(--krnl-violet), 0.055) 1px, transparent 1.6px);
+  background-size: 32px 32px;
+  animation: krnl-drift-grid 48s linear infinite;
+}
+.krnl-bg-producto .krnl-section-bg__layer--wave-a {
+  background: radial-gradient(ellipse 55% 42% at 18% 28%, rgba(var(--krnl-pink), 0.10), transparent 72%);
+  animation: krnl-wave-a 26s ease-in-out infinite;
+}
+.krnl-bg-producto .krnl-section-bg__layer--wave-b {
+  background: radial-gradient(ellipse 50% 38% at 82% 74%, rgba(var(--krnl-violet), 0.09), transparent 72%);
+  animation: krnl-wave-b 32s ease-in-out infinite;
+}
+
+/* ─── gobierno — geometría ordenada ───────────────────────────────── */
+.krnl-bg-gobierno .krnl-section-bg__layer--grid {
+  inset: -4%;
+  background-repeat: repeat;
+  background-image:
+    linear-gradient(rgba(var(--krnl-blue), 0.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(var(--krnl-blue), 0.055) 1px, transparent 1px);
+  background-size: 56px 56px;
+  animation: krnl-fade-soft 24s ease-in-out infinite;
+}
+.krnl-bg-gobierno .krnl-section-bg__layer--sweep {
+  background: linear-gradient(100deg, transparent 42%, rgba(var(--krnl-violet), 0.065) 50%, transparent 58%);
+  background-size: 260% 260%;
+  animation: krnl-sweep-pendulum-wide 34s ease-in-out infinite;
+}
+
+/* ─── soberanía — capas diagonales suaves ─────────────────────────── */
+.krnl-bg-soberania .krnl-section-bg__layer--layers {
+  background-repeat: repeat;
+  background-image: repeating-linear-gradient(
+    130deg,
+    rgba(var(--krnl-violet), 0.05) 0px,
+    rgba(var(--krnl-violet), 0.05) 2px,
+    transparent 2px,
+    transparent 96px,
+    rgba(var(--krnl-pink), 0.045) 96px,
+    rgba(var(--krnl-pink), 0.045) 98px,
+    transparent 98px,
+    transparent 192px
+  );
+  background-size: 220% 220%;
+  animation: krnl-diagonal-drift 44s ease-in-out infinite;
+}
+.krnl-bg-soberania .krnl-section-bg__layer--glow {
+  background: radial-gradient(ellipse 65% 48% at 50% 100%, rgba(var(--krnl-blue), 0.06), transparent 72%);
+}
+
+/* ─── keyframes ────────────────────────────────────────────────────── */
+@keyframes krnl-drift-a {
+  0%, 100% { transform: translate(0, 0); opacity: 1; }
+  50%      { transform: translate(1.5%, -1.5%); opacity: 0.7; }
+}
+@keyframes krnl-drift-b {
+  0%, 100% { transform: translate(0, 0); opacity: 0.85; }
+  50%      { transform: translate(-1.8%, 1.4%); opacity: 1; }
+}
+@keyframes krnl-sweep-pendulum {
+  0%, 100% { background-position: 0% 0%, 0% 0%; }
+  50%      { background-position: 6% 4%, -6% -4%; }
+}
+@keyframes krnl-sweep-pendulum-wide {
+  0%, 100% { background-position: 0% 0%; }
+  50%      { background-position: 18% 12%; }
+}
+@keyframes krnl-drift-grid {
+  0%   { background-position: 0 0; }
+  100% { background-position: 32px 32px; }
+}
+@keyframes krnl-wave-a {
+  0%, 100% { transform: translate(0, 0); }
+  50%      { transform: translate(3%, 2%); }
+}
+@keyframes krnl-wave-b {
+  0%, 100% { transform: translate(0, 0); }
+  50%      { transform: translate(-3%, -2.5%); }
+}
+@keyframes krnl-fade-soft {
+  0%, 100% { opacity: 0.85; }
+  50%      { opacity: 1; }
+}
+@keyframes krnl-diagonal-drift {
+  0%, 100% { background-position: 0% 0%; }
+  50%      { background-position: 22% 22%; }
+}
+
+/* ─── responsive tuning ──────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .krnl-bg-producto .krnl-section-bg__layer--dotgrid { background-size: 22px 22px; }
+  .krnl-bg-gobierno  .krnl-section-bg__layer--grid    { background-size: 38px 38px; }
+  .krnl-bg-soberania .krnl-section-bg__layer--layers  { background-size: 300% 300%; }
+}
+
+/* ─── accesibilidad ────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .krnl-section-bg .krnl-section-bg__layer {
+    animation: none !important;
+    transform: none !important;
+  }
+}
