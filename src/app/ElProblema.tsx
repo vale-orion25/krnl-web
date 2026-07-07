@@ -4,7 +4,7 @@ import {
   ArrowRight, AlertTriangle, EyeOff, ShieldOff, Database, Users, Bot,
   FileText, Activity, Lock, TrendingUp, GitBranch, Layers, CheckCircle2,
   X, Shield, Scale, DollarSign, Server, MessageSquare, Workflow, Eye,
-  ChevronDown,
+  ChevronDown, ShieldCheck,
 } from "lucide-react";
 import { ImageWithFallback } from "@/app/components/figma/ImageWithFallback";
 import krnlLogo from "@/imports/krnl-logo-dark.png";
@@ -449,6 +449,39 @@ function SectionShadowAIMap() {
   );
 }
 
+// ── SECTION 3.5 — MARCO REGULATORIO (Ley 21.719) ──────────────────────────────
+function SectionMarcoRegulatorio() {
+  const ref = useRef<HTMLElement>(null);
+  const inV = useInView(ref, { once: true, margin: "-80px" });
+  return (
+    <section ref={ref} className="relative overflow-hidden" style={{ background: B.surface, borderTop: `1px solid ${B.border}` }}>
+      <SectionBackground variant="riesgos" />
+      <div className="relative max-w-[900px] mx-auto px-5 md:px-10 py-14 md:py-16">
+        <motion.div className="rounded-2xl p-6 md:p-8 flex flex-col md:flex-row items-start gap-5 md:gap-8"
+          style={{ background: "rgba(255,255,255,0.92)", border: `1px solid ${B.borderSoft}`, boxShadow: "0 2px 14px rgba(109,43,255,0.05)" }}
+          initial={{ opacity: 0, y: 18 }} animate={inV ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5, ease }}>
+          <div className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0"
+            style={{ background: `linear-gradient(135deg, ${B.purpleSoft}, ${B.magentaSoft})`, border: `1px solid ${B.border}` }}>
+            <ShieldCheck className="w-6 h-6" style={{ color: B.purple }} strokeWidth={1.75} />
+          </div>
+          <div>
+            <SectionLabel>Shadow AI + datos personales</SectionLabel>
+            <h3 className="text-[19px] md:text-[22px] font-[800] leading-snug mb-3" style={{ color: B.text }}>
+              El Shadow AI también es un riesgo de datos personales.
+            </h3>
+            <p className="text-[14px] leading-relaxed mb-3" style={{ color: B.textSub }}>
+              Cuando cada área usa IA por su cuenta, datos personales de clientes, colaboradores o candidatos pueden terminar en herramientas o cuentas fuera del control corporativo. La Ley 21.719 —vigente desde el 1 de diciembre de 2026— eleva las exigencias sobre el tratamiento de datos personales en Chile. KRNL fortalece la trazabilidad y el control sobre qué agentes y modelos acceden a qué datos, apoyando el gobierno de estos flujos.
+            </p>
+            <p className="text-[11.5px] leading-relaxed" style={{ color: B.textMuted }}>
+              KRNL es una capa de gobierno operativo; el cumplimiento normativo específico depende de la implementación y del asesoramiento legal de cada organización.
+            </p>
+          </div>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
 // ── SECTION 4 — CONSECUENCIAS ─────────────────────────────────────────────────
 const CONSECUENCIAS = [
   {
@@ -843,6 +876,7 @@ export default function PaginaElProblema() {
       <HeroElProblema />
       <SectionTresRiesgos />
       <SectionShadowAIMap />
+      <SectionMarcoRegulatorio />
       <SectionConsecuencias />
       <SectionAntesKrnl />
       <SectionPuntoQuiebre />

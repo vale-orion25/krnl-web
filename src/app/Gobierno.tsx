@@ -4,7 +4,7 @@ import {
   ArrowRight, Shield, Bot, Database, Workflow, DollarSign, FileText,
   Box, Eye, CheckCircle2, AlertTriangle, Lock, Activity, BarChart3,
   Users, Server, Layers, Clock, Settings, RefreshCw, Check, X,
-  MessageSquare, Globe,
+  MessageSquare, Globe, ChevronDown, ChevronRight,
 } from "lucide-react";
 import { ImageWithFallback } from "@/app/components/figma/ImageWithFallback";
 import krnlLogo from "@/imports/krnl-logo-dark.png";
@@ -206,12 +206,14 @@ const FLUJO_STAGES = [
   { num: "05", label: "Registro auditable",  detail: "Cada paso queda guardado, con evidencia disponible después.",    Icon: FileText     },
 ];
 
-const DECISION_ROWS = [
+const FLUJO_ARROW_POSITIONS = [24.8, 41.6, 58.4, 75.2]; // % — puntos medios entre los 5 nodos (línea 8%–92%)
+
+const DECISION_ROWS: { label: string; value: string; isStatus?: boolean; sc?: string; sb?: string }[] = [
   { label: "Política aplicada", value: "Confidencialidad Legal" },
   { label: "Modelo autorizado", value: "Claude" },
-  { label: "Riesgo detectado",  value: "Medio", isStatus: true },
-  { label: "Acción",            value: "Revisión humana", isStatus: true },
-  { label: "Evidencia",         value: "Log generado" },
+  { label: "Riesgo detectado",  value: "Medio",            isStatus: true, sc: B.amber, sb: B.amberSoft },
+  { label: "Acción",            value: "Revisión humana",  isStatus: true, sc: B.amber, sb: B.amberSoft },
+  { label: "Evidencia",         value: "Log generado",     isStatus: true, sc: B.green, sb: B.greenSoft },
 ];
 
 function FlujoNodo({ stage, i, inV }: { stage: typeof FLUJO_STAGES[0]; i: number; inV: boolean }) {
@@ -222,9 +224,14 @@ function FlujoNodo({ stage, i, inV }: { stage: typeof FLUJO_STAGES[0]; i: number
       transition={{ duration: 0.5, delay: 0.15 + i * 0.1, ease }}>
       <span className="text-[9px] font-[700] mb-2.5" style={{ ...MONO, color: B.textMuted }}>{num}</span>
       <motion.div className="relative z-10 flex items-center justify-center rounded-2xl mb-3.5 shrink-0"
-        style={{ width: 56, height: 56, background: B.purpleSoft }}
-        whileHover={{ scale: 1.06, transition: { duration: 0.2 } }}>
-        <Icon className="w-6 h-6" style={{ color: B.purple }} strokeWidth={1.7} />
+        style={{
+          width: 60, height: 60,
+          background: `linear-gradient(150deg, ${B.purpleSoft} 0%, ${B.magentaSoft} 100%)`,
+          border: `1.5px solid ${B.purple}25`,
+          boxShadow: `0 6px 18px ${B.purple}18`,
+        }}
+        whileHover={{ scale: 1.06, borderColor: `${B.magenta}45`, transition: { duration: 0.2 } }}>
+        <Icon className="w-[26px] h-[26px]" style={{ color: B.purple }} strokeWidth={1.6} />
       </motion.div>
       <p className="text-[14px] font-[700] mb-1.5 leading-snug" style={{ color: B.text }}>{label}</p>
       <p className="text-[11px] leading-relaxed" style={{ color: B.textSub }}>{detail}</p>
@@ -241,10 +248,15 @@ function FlujoStageVertical({ stage, i, inV, isLast }: { stage: typeof FLUJO_STA
       transition={{ duration: 0.45, delay: 0.1 + i * 0.1, ease }}>
       <div className="flex flex-col items-center shrink-0">
         <div className="relative z-10 flex items-center justify-center rounded-2xl shrink-0"
-          style={{ width: 56, height: 56, background: B.purpleSoft }}>
+          style={{
+            width: 56, height: 56,
+            background: `linear-gradient(150deg, ${B.purpleSoft} 0%, ${B.magentaSoft} 100%)`,
+            border: `1.5px solid ${B.purple}25`,
+            boxShadow: `0 6px 18px ${B.purple}18`,
+          }}>
           <Icon className="w-[22px] h-[22px]" style={{ color: B.purple }} strokeWidth={1.7} />
         </div>
-        {!isLast && <div className="w-px flex-1 mt-2" style={{ background: B.borderSoft, minHeight: 26 }} />}
+        {!isLast && <div className="w-px flex-1 mt-2" style={{ background: `linear-gradient(180deg, ${B.purple}45, ${B.magenta}20)`, minHeight: 26 }} />}
       </div>
       <div className="pt-1.5 pb-2">
         <span className="text-[9px] font-[700]" style={{ ...MONO, color: B.textMuted }}>{num}</span>
@@ -289,6 +301,14 @@ function SectionFlujoGobernado() {
                 animate={inV ? { left: ["8%", "92%"], opacity: [0, 0.9, 0.9, 0] } : {}}
                 transition={{ duration: 2.4, delay: 1.6, repeat: Infinity, repeatDelay: 0.9, ease: "easeInOut" }} />
             )}
+            {/* Flechas sutiles entre pasos — solo desktop, donde la grilla es exactamente 5 columnas */}
+            {FLUJO_ARROW_POSITIONS.map((pos, i) => (
+              <motion.div key={pos} className="hidden lg:flex absolute items-center justify-center rounded-full pointer-events-none"
+                style={{ top: 50, left: `${pos}%`, marginTop: -9, marginLeft: -9, width: 18, height: 18, background: B.surface, border: `1px solid ${B.borderSoft}` }}
+                initial={{ opacity: 0 }} animate={inV ? { opacity: 1 } : {}} transition={{ delay: 0.5 + i * 0.1, duration: 0.4 }}>
+                <ChevronRight className="w-3 h-3" style={{ color: B.purple }} strokeWidth={2.5} />
+              </motion.div>
+            ))}
             <div className="relative grid grid-cols-3 lg:grid-cols-5 gap-6">
               {FLUJO_STAGES.map((stage, i) => (
                 <FlujoNodo key={stage.label} stage={stage} i={i} inV={inV} />
@@ -304,29 +324,138 @@ function SectionFlujoGobernado() {
           ))}
         </div>
 
-        {/* Panel "Decisión tomada por KRNL" — evidencia de sistema, con la misma jerarquía que el panel del hero */}
-        <motion.div className="mt-10 md:mt-14 max-w-[720px] mx-auto rounded-2xl overflow-hidden"
+        {/* Puente narrativo — conecta el circuito con su resultado operativo */}
+        <motion.div className="flex flex-col items-center gap-2 mt-8 md:mt-10"
+          initial={{ opacity: 0 }} animate={inV ? { opacity: 1 } : {}} transition={{ duration: 0.5, delay: 0.42 }}>
+          <ChevronDown className="w-4 h-4" style={{ color: B.purple }} strokeWidth={2} />
+          <p className="text-[13px] font-[600]" style={{ color: B.purple }}>Así queda registrado el resultado de cada circuito.</p>
+        </motion.div>
+
+        {/* Panel "Decisión tomada por KRNL" — resultado operativo del circuito, misma jerarquía que el panel del hero */}
+        <motion.div className="mt-5 md:mt-6 max-w-[720px] mx-auto rounded-2xl overflow-hidden"
           style={{ background: B.surface, border: `1px solid ${B.border}`, boxShadow: "0 14px 44px rgba(109,43,255,0.11)" }}
           initial={{ opacity: 0, y: 16 }} animate={inV ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.55, delay: 0.5, ease }}>
-          <div className="flex items-center gap-2.5 px-6 py-4"
+          <div className="flex items-center gap-2.5 px-6 py-4 md:py-5"
             style={{ background: `linear-gradient(135deg, ${B.text} 0%, #1B2438 100%)` }}>
             <motion.span className="w-2 h-2 rounded-full" style={{ background: "#22c55e" }}
               animate={{ opacity: [1, 0.4, 1] }} transition={{ duration: 2, repeat: Infinity }} />
             <p className="text-[11.5px] font-[700] uppercase tracking-[0.16em]" style={{ ...MONO, color: "#fff" }}>Decisión tomada por KRNL</p>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-10 px-6 py-2.5">
-            {DECISION_ROWS.map(({ label, value, isStatus }) => (
-              <div key={label} className="flex items-center justify-between py-3.5" style={{ borderBottom: `1px solid ${B.borderSoft}` }}>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-10 px-6 md:px-8 py-3">
+            {DECISION_ROWS.map(({ label, value, isStatus, sc, sb }) => (
+              <div key={label} className="flex items-center justify-between py-4" style={{ borderBottom: `1px solid ${B.borderSoft}` }}>
                 <span className="text-[12.5px]" style={{ color: B.textMuted }}>{label}</span>
                 {isStatus ? (
-                  <span className="text-[11px] font-[700] px-2.5 py-1 rounded-full" style={{ background: B.amberSoft, color: B.amber }}>{value}</span>
+                  <StatusChip label={value} color={sc!} bg={sb!} />
                 ) : (
                   <span className="text-[13.5px] font-[700]" style={{ color: B.text }}>{value}</span>
                 )}
               </div>
             ))}
           </div>
+          <div className="flex items-center justify-between px-6 md:px-8 py-3" style={{ borderTop: `1px solid ${B.borderSoft}`, background: B.softBg }}>
+            <p className="text-[10px]" style={{ color: B.textMuted }}>Vista referencial · datos ilustrativos</p>
+            <span className="inline-flex items-center gap-1 text-[11px] font-[600]" style={{ color: B.purple }}>
+              Ver evidencia <ArrowRight className="w-3 h-3" strokeWidth={2.2} />
+            </span>
+          </div>
         </motion.div>
+      </div>
+    </section>
+  );
+}
+
+// ── 2.5 GOBIERNO PREPARADO PARA AUDITORÍA, DATOS Y CONTROL EMPRESARIAL ────────
+const GOBIERNO_PILARES = [
+  { Icon: Shield,   title: "Políticas",    desc: "Define qué puede hacer cada agente, modelo o flujo de trabajo." },
+  { Icon: Lock,     title: "Accesos",      desc: "Controla quién puede usar qué datos, modelos, agentes o herramientas." },
+  { Icon: Activity, title: "Trazabilidad", desc: "Registra qué ocurrió, cuándo, con qué modelo y bajo qué regla." },
+  { Icon: FileText, title: "Evidencia",    desc: "Deja registros disponibles para revisión interna, TI, legal, compliance o auditoría." },
+];
+
+const EVIDENCIA_DISPONIBLE = [
+  { Icon: MessageSquare, title: "Registro de interacciones", desc: "Quién usó qué agente, cuándo y para qué." },
+  { Icon: Shield,         title: "Política aplicada",         desc: "Qué regla permitió, bloqueó o derivó una acción." },
+  { Icon: Box,            title: "Modelo utilizado",           desc: "Qué modelo intervino en cada ejecución." },
+  { Icon: Eye,            title: "Revisión disponible",        desc: "Evidencia consultable para TI, legal, compliance o auditoría interna." },
+];
+
+function SectionGobiernoPreparado() {
+  const ref = useRef<HTMLElement>(null);
+  const inV = useInView(ref, { once: true, margin: "-220px" });
+  return (
+    <section ref={ref} className="relative overflow-hidden" style={{ background: B.surface, borderTop: `1px solid ${B.border}` }}>
+      <SectionBackground variant="gobierno" />
+      <div className="relative max-w-[1160px] mx-auto px-5 md:px-10 pt-10 md:pt-14 pb-14 md:pb-20">
+        <div className="grid grid-cols-1 lg:grid-cols-[0.85fr_1.15fr] gap-10 lg:gap-14 items-start">
+
+          {/* Columna izquierda — narrativa + CTA */}
+          <motion.div
+            initial={{ opacity: 0, y: 16 }} animate={inV ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.55, ease }}>
+            <SectionLabel>Preparación regulatoria</SectionLabel>
+            <h2 className="font-[800] mb-4" style={{ fontSize: "clamp(24px, 2.6vw, 34px)", color: B.text, lineHeight: 1.22 }}>
+              Gobierno de IA preparado para auditoría, datos y control empresarial.
+            </h2>
+            <p className="mb-7" style={{ color: B.textSub, fontSize: 15.5, lineHeight: 1.65 }}>
+              KRNL permite definir políticas, registrar interacciones, controlar accesos y generar evidencia sobre el uso de agentes, modelos y datos. Esto ayuda a las organizaciones a operar IA con mayor trazabilidad y prepararse para mayores exigencias regulatorias sobre tratamiento de datos personales.
+            </p>
+            <button onClick={() => krnlNavigate("contacto")}
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full font-[600] text-white text-[13px] transition-all hover:scale-[1.03] active:scale-[0.98]"
+              style={{ background: GRAD, boxShadow: `0 6px 20px ${B.purple}35` }}>
+              Conoce cómo funciona KRNL <ArrowRight className="w-3.5 h-3.5" strokeWidth={2.2} />
+            </button>
+          </motion.div>
+
+          {/* Columna derecha — pilares + evidencia */}
+          <div className="flex flex-col gap-5">
+            <svg style={{ position: "absolute", width: 0, height: 0, overflow: "hidden" }} aria-hidden="true">
+              <defs>
+                <linearGradient id="gobiernoPilarGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#D4009A" />
+                  <stop offset="100%" stopColor="#6D2BFF" />
+                </linearGradient>
+              </defs>
+            </svg>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {GOBIERNO_PILARES.map(({ Icon, title, desc }, i) => (
+                <motion.div key={title} className="rounded-xl p-5"
+                  style={{ background: B.surface, border: `1px solid ${B.borderSoft}`, boxShadow: "0 1px 2px rgba(13,21,36,0.03)" }}
+                  initial={{ opacity: 0, y: 14 }} animate={inV ? { opacity: 1, y: 0 } : {}}
+                  transition={{ duration: 0.4, delay: 0.15 + i * 0.22, ease }}
+                  whileHover={{ y: -2, boxShadow: "0 6px 16px rgba(13,21,36,0.06)", transition: { duration: 0.2 } }}>
+                  <Icon className="w-8 h-8 mb-4" style={{ stroke: "url(#gobiernoPilarGrad)", color: "transparent" }} strokeWidth={1.6} />
+                  <p className="text-[13.5px] font-[700] mb-1.5" style={{ color: B.text }}>{title}</p>
+                  <p className="text-[11.5px] leading-relaxed" style={{ color: B.textSub }}>{desc}</p>
+                </motion.div>
+              ))}
+            </div>
+
+            {/* Qué evidencia puede dejar KRNL */}
+            <motion.div className="rounded-2xl p-6"
+              style={{ background: B.softBg, border: `1px solid ${B.borderSoft}` }}
+              initial={{ opacity: 0, y: 16 }} animate={inV ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.55, delay: 0.45, ease }}>
+              <p className="text-[10px] font-[700] tracking-[0.18em] uppercase mb-4" style={{ ...MONO, color: B.textMuted }}>
+                Qué evidencia puede dejar KRNL
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {EVIDENCIA_DISPONIBLE.map(({ Icon, title, desc }, i) => (
+                  <motion.div key={title} className="flex items-start gap-3"
+                    initial={{ opacity: 0, y: 10 }} animate={inV ? { opacity: 1, y: 0 } : {}}
+                    transition={{ duration: 0.4, delay: 0.55 + i * 0.08, ease }}>
+                    <div className="flex items-center justify-center rounded-lg shrink-0" style={{ width: 32, height: 32, background: B.surface, border: `1px solid ${B.borderSoft}` }}>
+                      <Icon className="w-4 h-4" style={{ color: B.purple }} strokeWidth={1.8} />
+                    </div>
+                    <div>
+                      <p className="text-[12.5px] font-[700] mb-0.5" style={{ color: B.textSub }}>{title}</p>
+                      <p className="text-[11px] leading-relaxed" style={{ color: B.textMuted }}>{desc}</p>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
+          </div>
+
+        </div>
       </div>
     </section>
   );
@@ -343,11 +472,10 @@ const CONTROLA_ITEMS = [
 
 function SectionQueControlaKrnl() {
   const ref = useRef<HTMLElement>(null);
-  const inV = useInView(ref, { once: true, margin: "-80px" });
+  const inV = useInView(ref, { once: true, margin: "-220px" });
 
   return (
-    <section ref={ref} id="gobierno-guardrails" className="relative overflow-hidden" style={{ background: B.surface, borderTop: `1px solid ${B.border}` }}>
-      <SectionBackground variant="gobierno" />
+    <section ref={ref} id="gobierno-guardrails" className="relative overflow-hidden" style={{ background: `linear-gradient(160deg, ${B.softBg} 0%, ${B.purpleSoft}25 100%)`, borderTop: `1px solid ${B.border}` }}>
       <div className="relative max-w-[1160px] mx-auto px-5 md:px-10 py-12 md:py-16">
         <motion.div className="text-center mb-10"
           initial={{ opacity: 0, y: 14 }} animate={inV ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.55, ease }}>
@@ -360,16 +488,14 @@ function SectionQueControlaKrnl() {
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-5">
           {CONTROLA_ITEMS.map(({ Icon, title, desc }, i) => (
-            <motion.div key={title} className="rounded-xl p-5"
+            <motion.div key={title} className="rounded-xl p-6"
               style={{ background: B.surface, border: `1px solid ${B.borderSoft}`, boxShadow: "0 1px 2px rgba(13,21,36,0.03)" }}
               initial={{ opacity: 0, y: 14 }} animate={inV ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.45, delay: 0.1 + i * 0.07, ease }}
-              whileHover={{ y: -2, boxShadow: "0 6px 16px rgba(13,21,36,0.06)", transition: { duration: 0.2 } }}>
-              <div className="flex items-center justify-center rounded-lg mb-3.5" style={{ width: 38, height: 38, background: B.softBg }}>
-                <Icon className="w-[18px] h-[18px]" style={{ color: B.purple }} strokeWidth={1.7} />
-              </div>
+              transition={{ duration: 0.4, delay: 0.1 + i * 0.22, ease }}
+              whileHover={{ y: -3, boxShadow: "0 8px 20px rgba(13,21,36,0.07)", transition: { duration: 0.2 } }}>
+              <Icon className="w-8 h-8 mb-4" style={{ color: B.magenta }} strokeWidth={1.6} />
               <p className="text-[13.5px] font-[700] mb-1.5" style={{ color: B.text }}>{title}</p>
               <p className="text-[11.5px] leading-relaxed" style={{ color: B.textSub }}>{desc}</p>
             </motion.div>
@@ -382,10 +508,10 @@ function SectionQueControlaKrnl() {
 
 // ── 4. EVIDENCIA OPERATIVA ────────────────────────────────────────────────────
 const EVIDENCIA_ROWS = [
-  { time: "14:32", area: "Finanzas", agent: "Ag. Financiero",  model: "ChatGPT",      policy: "Política costos",           status: "Validado",        sc: B.green,  sb: "#F0FDF4" },
-  { time: "14:28", area: "Legal",    agent: "Ag. Legal",       model: "Claude",  policy: "Política confidencialidad", status: "Revisión humana", sc: B.amber,  sb: B.amberSoft },
-  { time: "14:21", area: "TI",       agent: "Ag. DevOps",      model: "Modelo local", policy: "Política interna",          status: "Aprobado",        sc: B.purple, sb: B.purpleSoft },
-  { time: "14:09", area: "RRHH",     agent: "Ag. Onboarding",  model: "ChatGPT",      policy: "Política RRHH",             status: "Validado",        sc: B.green,  sb: "#F0FDF4" },
+  { time: "14:32", area: "Legal",    agent: "Agente Contratos", model: "Claude",       policy: "Confidencialidad Legal",     status: "Revisión humana", sc: B.amber,   sb: B.amberSoft },
+  { time: "14:21", area: "Finanzas", agent: "Análisis Gastos",  model: "ChatGPT",      policy: "Política de costos",         status: "Permitido",       sc: B.green,   sb: B.greenSoft },
+  { time: "14:09", area: "RR.HH.",   agent: "Onboarding",       model: "Modelo local", policy: "Política de RR.HH.",         status: "Permitido",       sc: B.green,   sb: B.greenSoft },
+  { time: "13:54", area: "Soporte",  agent: "Agente Tickets",   model: "ChatGPT",      policy: "Política de acceso a datos", status: "Bloqueado",       sc: B.magenta, sb: B.magentaSoft },
 ];
 
 function SectionEvidenciaOperativa() {
@@ -410,14 +536,18 @@ function SectionEvidenciaOperativa() {
           initial={{ opacity: 0, y: 16 }} animate={inV ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.55, ease }}>
           <div className="overflow-x-auto">
           <div className="min-w-[680px]">
-          <div className="grid px-6 py-2.5" style={{ gridTemplateColumns: "70px 1fr 1fr 1fr 1fr 120px", borderBottom: `1px solid ${B.borderSoft}`, background: B.softBg }}>
+          <div className="grid px-6 py-3" style={{ gridTemplateColumns: "70px 1fr 1fr 1fr 1fr 120px", borderBottom: `1.5px solid ${B.borderSoft}`, background: B.softBg }}>
             {["Hora", "Área / Agente", "Modelo", "Política", "Estado", "Evidencia"].map((h, i) => (
               <p key={i} className="text-[10px] font-[700] tracking-[0.1em] uppercase" style={{ ...MONO, color: B.textMuted }}>{h}</p>
             ))}
           </div>
           {EVIDENCIA_ROWS.map((r, i) => (
-            <motion.div key={i} className="grid px-6 py-2.5 items-center"
-              style={{ gridTemplateColumns: "70px 1fr 1fr 1fr 1fr 120px", borderBottom: i < EVIDENCIA_ROWS.length - 1 ? `1px solid ${B.borderSoft}` : "none" }}
+            <motion.div key={i} className="grid px-6 py-3.5 items-center"
+              style={{
+                gridTemplateColumns: "70px 1fr 1fr 1fr 1fr 120px",
+                borderBottom: i < EVIDENCIA_ROWS.length - 1 ? `1px solid ${B.borderSoft}` : "none",
+                borderLeft: `3px solid ${r.sc}`,
+              }}
               initial={{ opacity: 0, x: -8 }} animate={inV ? { opacity: 1, x: 0 } : {}}
               transition={{ delay: 0.1 + i * 0.08, duration: 0.35, ease }}>
               <div className="flex items-center gap-1.5">
@@ -501,6 +631,7 @@ export default function PaginaGobierno() {
     <div style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
       <HeroGobierno />
       <SectionFlujoGobernado />
+      <SectionGobiernoPreparado />
       <SectionQueControlaKrnl />
       <SectionEvidenciaOperativa />
       <CTAFinalGobierno />

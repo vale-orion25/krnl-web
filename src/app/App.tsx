@@ -839,6 +839,7 @@ export default function App() {
       <SectionTecnologiasCompatibles />
       <SectionParaQuien />
       <SectionGobierno />
+      <SectionMarcoRegulatorio />
       <SectionBeneficios />
       <SectionActivacion />
       <KrnlFooter />
@@ -1742,6 +1743,122 @@ function SectionGobierno() {
   );
 }
 
+
+// ── Section: Marco regulatorio (Ley 21.719) ───────────────────────────────────
+const MARCO_REGULATORIO_CHIPS = [
+  { Icon: FileText, label: "Ley 21.719" },
+  { Icon: Database, label: "Datos personales" },
+  { Icon: Activity, label: "Trazabilidad" },
+  { Icon: Shield,   label: "Gobierno IA" },
+];
+
+function SectionMarcoRegulatorio() {
+  const sRef = useRef<HTMLElement>(null);
+  const inV  = useInView(sRef, { once: true, margin: "-80px" });
+  const ease = [0.2, 0, 0.2, 1] as const;
+  return (
+    <section ref={sRef} style={{ background: B.surface, borderTop: `1px solid ${B.border}` }}>
+      <div className="max-w-[1200px] mx-auto px-5 md:px-10 py-12 md:py-16">
+        <motion.div className="relative overflow-hidden rounded-[28px]"
+          style={{
+            background: `linear-gradient(155deg, #FFFFFF 0%, ${B.purpleSoft}60 55%, ${B.magentaSoft}45 100%)`,
+            border: `1px solid ${B.purple}22`,
+            boxShadow: `0 24px 64px ${B.purple}0F, 0 4px 16px rgba(13,21,36,0.04)`,
+          }}
+          initial={{ opacity: 0, y: 16 }} animate={inV ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6, ease }}>
+
+          {/* ── Decorative layer — dot mesh + soft blobs + fine data lines, low opacity ── */}
+          <div className="absolute inset-0 pointer-events-none" style={{ opacity: 0.5 }}>
+            <DotMesh />
+          </div>
+          <div className="absolute -top-16 -right-16 w-64 h-64 rounded-full pointer-events-none"
+            style={{ background: `radial-gradient(circle, ${B.magentaSoft} 0%, transparent 70%)`, opacity: 0.6 }} />
+          <div className="absolute -bottom-20 right-1/4 w-56 h-56 rounded-full pointer-events-none"
+            style={{ background: `radial-gradient(circle, ${B.purpleSoft} 0%, transparent 70%)`, opacity: 0.5 }} />
+          <svg className="absolute right-0 top-0 h-full pointer-events-none hidden md:block" width="360" height="100%"
+            viewBox="0 0 360 400" fill="none" preserveAspectRatio="xMidYMid slice" aria-hidden="true" style={{ opacity: 0.4 }}>
+            <path d="M40 0 C 140 90, 60 180, 180 260 S 340 340, 320 400" stroke={B.purple} strokeWidth="1" strokeDasharray="2 6" />
+            <path d="M120 -20 C 220 100, 140 200, 260 280" stroke={B.magenta} strokeWidth="1" strokeDasharray="2 6" />
+            <circle cx="180" cy="260" r="2.5" fill={B.purple} opacity="0.5" />
+            <circle cx="260" cy="280" r="2" fill={B.magenta} opacity="0.5" />
+          </svg>
+
+          <div className="relative z-10 p-6 md:p-10 lg:p-12">
+            <div className="flex flex-col md:flex-row md:items-start gap-8 md:gap-10">
+
+              {/* ── Icon column — sello de protección/gobierno ── */}
+              <div className="flex md:block justify-center shrink-0">
+                <div className="relative flex items-center justify-center" style={{ width: 96, height: 96 }}>
+                  <motion.div className="absolute rounded-full pointer-events-none"
+                    style={{ inset: -16, background: `radial-gradient(circle, ${B.magenta}18 0%, ${B.purple}12 55%, transparent 75%)`, filter: "blur(14px)" }}
+                    animate={{ scale: [1, 1.08, 1], opacity: [0.65, 1, 0.65] }}
+                    transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }} />
+                  <motion.div className="absolute rounded-full pointer-events-none"
+                    style={{ inset: -6, border: `1px solid ${B.purple}30` }}
+                    animate={{ scale: [1, 1.05, 1], opacity: [0.55, 0.2, 0.55] }}
+                    transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }} />
+                  <div className="absolute rounded-full pointer-events-none" style={{ inset: 4, border: `1px solid ${B.magenta}22` }} />
+                  <div className="relative w-16 h-16 rounded-2xl flex items-center justify-center"
+                    style={{ background: `linear-gradient(135deg, ${B.purpleSoft}, ${B.magentaSoft})`, border: `1px solid ${B.purple}30`, boxShadow: `0 10px 28px ${B.purple}22, inset 0 1px 0 rgba(255,255,255,0.85)` }}>
+                    <ShieldCheck className="w-8 h-8 home-icon-gradient" strokeWidth={1.6} />
+                  </div>
+                </div>
+              </div>
+
+              {/* ── Content column ── */}
+              <div className="flex-1 min-w-0">
+                <SectionMarker label="Nuevo estándar de datos" />
+                <h3 className="font-[800] leading-[1.15] mt-3 mb-4" style={{ fontSize: "clamp(24px, 2.6vw, 32px)", color: B.text, maxWidth: 640 }}>
+                  Chile eleva el estándar de protección de datos personales.
+                </h3>
+
+                {/* Chips */}
+                <div className="flex flex-wrap gap-2 mb-5">
+                  {MARCO_REGULATORIO_CHIPS.map(({ Icon, label }) => (
+                    <span key={label} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px] font-[600]"
+                      style={{ background: "rgba(255,255,255,0.75)", border: `1px solid ${B.purple}28`, color: B.text }}>
+                      <Icon className="w-3.5 h-3.5 shrink-0" style={{ color: B.purple }} strokeWidth={1.8} />
+                      {label}
+                    </span>
+                  ))}
+                </div>
+
+                {/* Descripción — fecha destacada inline */}
+                <p className="text-[15px] leading-relaxed mb-6" style={{ color: B.textSub, maxWidth: 620 }}>
+                  La Ley 21.719 entra en vigencia el{" "}
+                  <span style={{ color: B.magenta, fontWeight: 700 }}>1 de diciembre de 2026</span>{" "}
+                  y establece nuevas exigencias sobre el tratamiento de datos personales en Chile. KRNL apoya el gobierno de la IA empresarial —centralizando agentes, modelos y datos bajo políticas, trazabilidad y control— y ayuda a las organizaciones a prepararse para este nuevo estándar.
+                </p>
+
+                {/* CTAs */}
+                <div className="flex flex-col sm:flex-row sm:items-center gap-3 md:gap-6 mb-7">
+                  <button onClick={() => krnlNavigate("contacto")}
+                    className="inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-full font-[600] text-white text-[14px] transition-all hover:scale-[1.02] active:scale-[0.98] w-full sm:w-auto"
+                    style={{ background: GRAD, boxShadow: `0 6px 24px ${B.purple}35` }}>
+                    Preparar gobierno de IA <ArrowRight className="w-4 h-4" strokeWidth={2.2} />
+                  </button>
+                  <button onClick={() => krnlNavigate("gobierno")}
+                    className="inline-flex items-center justify-center sm:justify-start gap-1.5 py-2 rounded-full font-[600] text-[13.5px] transition-all"
+                    style={{ color: B.text }}>
+                    Conocer enfoque de gobierno <ChevronRight className="w-4 h-4" style={{ color: B.purple }} strokeWidth={2.2} />
+                  </button>
+                </div>
+
+                {/* Disclaimer */}
+                <div className="flex items-start gap-2 pt-4" style={{ borderTop: `1px solid ${B.purple}18` }}>
+                  <ShieldCheck className="w-4 h-4 shrink-0 mt-0.5" style={{ color: B.textMuted }} strokeWidth={1.75} />
+                  <p className="text-[12px] leading-relaxed" style={{ color: B.textMuted, maxWidth: 620 }}>
+                    KRNL es una capa de gobierno operativo; el cumplimiento normativo específico depende de la implementación y del asesoramiento legal de cada organización.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
 
 // ── Section: Activación ───────────────────────────────────────────────────────
 function SectionActivacion() {
