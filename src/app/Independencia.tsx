@@ -73,9 +73,12 @@ function HeroRouter() {
       </div>
 
       {/* Diagram */}
+      <div className="relative">
+      {/* Pista de scroll horizontal — solo mobile, donde el diagrama no entra completo */}
+      <div className="md:hidden pointer-events-none absolute top-0 right-0 z-10" style={{ width: 28, height: "100%", background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.92))" }} />
       <div className="overflow-x-auto">
-      <div className="p-6 grid items-center gap-0 min-w-[600px] md:min-w-0"
-        style={{ gridTemplateColumns: "1fr 32px 200px 32px 1fr" }}>
+      <div className="p-4 md:p-6 grid items-center gap-0 min-w-[460px] md:min-w-0"
+        style={{ gridTemplateColumns: "1fr 20px 150px 20px 1fr" }}>
 
         {/* Left: models */}
         <div className="flex flex-col gap-2.5">
@@ -165,16 +168,17 @@ function HeroRouter() {
         </div>
       </div>
       </div>
+      </div>
 
       {/* Bottom status bar */}
       <div className="flex flex-wrap items-center gap-4 px-5 py-3" style={{ borderTop: `1px solid ${B.borderSoft}`, background: B.softBg }}>
-        {[["Modelo activo", "ChatGPT", B.purple], ["Política", "Aplicada", "#22c55e"], ["Trazabilidad", "Activa", B.magenta]].map(([l, v, c]) => (
+        {[["Modelo activo", "Modelo autorizado", B.purple], ["Política", "Aplicada", "#22c55e"], ["Trazabilidad", "Activa", B.magenta]].map(([l, v, c]) => (
           <div key={l} className="flex items-center gap-1.5">
             <span className="text-[9px]" style={{ color: B.textMuted }}>{l}:</span>
             <span className="text-[9px] font-[700]" style={{ color: c }}>{v}</span>
           </div>
         ))}
-        <span className="ml-auto text-[9px] font-[500]" style={{ ...MONO, color: B.textMuted }}>Cambia el modelo sin reconfigurar</span>
+        <span className="ml-auto text-[9px] font-[500]" style={{ ...MONO, color: B.textMuted }}>Diseñado para cambiar de modelo sin reconfigurar</span>
       </div>
     </div>
   );
@@ -217,7 +221,7 @@ function HeroIndependencia() {
         <motion.p className="text-center mb-10 mx-auto"
           style={{ fontSize: 17, color: B.textSub, maxWidth: 620, lineHeight: 1.65 }}
           initial={{ opacity: 0, y: 12 }} animate={inV ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.55, delay: 0.2, ease }}>
-          KRNL permite operar con ChatGPT, Claude, Gemini y modelos locales desde una capa común, manteniendo el control sobre tus datos, agentes, flujos y conocimiento.
+          KRNL propone una capa común para operar con distintos modelos de IA, como ChatGPT, Claude, Gemini o modelos locales, manteniendo control sobre datos, agentes, flujos y conocimiento.
         </motion.p>
 
 
@@ -455,7 +459,7 @@ function SectionMultiModelo() {
               </div>
             </motion.div>
             <p className="text-[9px] mt-2 text-center" style={{ color: B.textMuted }}>
-              Vista referencial · datos ilustrativos
+              Ejemplo conceptual de operación · no corresponde a métricas reales
             </p>
           </motion.div>
         </div>
@@ -487,7 +491,7 @@ function SectionKnowledge() {
 
   return (
     <section ref={ref} className="relative overflow-hidden" style={{ background: B.surface, borderTop: `1px solid ${B.border}` }}>
-      <SectionBackground variant="soberania" className="opacity-70" />
+      <SectionBackground variant="soberania" className="opacity-80" />
       <div className="relative max-w-[1200px] mx-auto px-5 md:px-10 py-14 md:py-20">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
           {/* Left: text */}
@@ -614,7 +618,7 @@ function NetworkMeshBg({ mouse, reduced }: { mouse: { x: number; y: number }; re
               <motion.line key={`e-${i}`} x1={x1} y1={y1} x2={x2} y2={y2}
                 stroke={colors[i % colors.length]} strokeWidth={0.6}
                 initial={{ opacity: 0 }}
-                animate={reduced ? { opacity: 0.1 } : { opacity: [0.08, 0.14, 0.08] }}
+                animate={reduced ? { opacity: 0.16 } : { opacity: [0.14, 0.2, 0.14] }}
                 transition={reduced ? { duration: 0.6 } : { duration: 14 + (i % 6) * 1.6, repeat: Infinity, ease: "easeInOut", delay: (i % 7) * 0.6 }} />
             );
           })}
@@ -624,7 +628,7 @@ function NetworkMeshBg({ mouse, reduced }: { mouse: { x: number; y: number }; re
               <motion.circle key={`n-${i}`} cx={x} cy={y} r={isFar ? 2.4 : 1.3} fill={colors[i % colors.length]}
                 style={isFar ? { filter: "blur(1.2px)" } : undefined}
                 initial={{ opacity: 0 }}
-                animate={reduced ? { opacity: 0.15 } : { opacity: [0.12, 0.22, 0.12] }}
+                animate={reduced ? { opacity: 0.22 } : { opacity: [0.18, 0.3, 0.18] }}
                 transition={reduced ? { duration: 0.6 } : { duration: 12 + (i % 5) * 2.2, repeat: Infinity, ease: "easeInOut", delay: (i % 6) * 0.5 }} />
             );
           })}
@@ -661,7 +665,7 @@ function SectionCambioModelo() {
 
   return (
     <section ref={ref} onMouseMove={handleMove} className="relative overflow-hidden"
-      style={{ background: `linear-gradient(160deg, ${B.softBg} 0%, ${B.purpleSoft}25 100%)`, borderTop: `1px solid ${B.border}` }}>
+      style={{ background: `linear-gradient(160deg, ${B.softBg} 0%, ${B.purpleSoft}38 100%)`, borderTop: `1px solid ${B.border}` }}>
       <NetworkMeshBg mouse={mouse} reduced={!!reduced} />
       <div className="relative z-10 max-w-[1200px] mx-auto px-5 md:px-10 py-20 md:py-32">
         <motion.div className="text-center mb-16 md:mb-20"
@@ -770,7 +774,7 @@ function SectionIndependenciaOp() {
   return (
     <section ref={ref} className="relative overflow-hidden" style={{ background: B.surface, borderTop: `1px solid ${B.border}` }}>
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <img src={background2} alt="" className="w-full h-full object-cover" style={{ opacity: 0.2 }} />
+        <img src={background2} alt="" className="w-full h-full object-cover" style={{ opacity: 0.28 }} />
       </div>
       <div className="relative max-w-[1200px] mx-auto px-5 md:px-10 py-14 md:py-20">
         <motion.div className="text-center mb-12"
@@ -791,7 +795,7 @@ function SectionIndependenciaOp() {
               initial={{ opacity: 0, y: 20 }} animate={inV ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.5, delay: 0.08 + i * 0.12, ease }}
               whileHover={{ y: -5, boxShadow: `0 14px 40px rgba(109,43,255,0.10)`, borderColor: `${col}30`, transition: { duration: 0.2 } }}>
-              <div className="absolute -top-4 -right-4 w-16 h-16 rounded-full pointer-events-none"
+              <div className="absolute -top-2 -right-2 w-14 h-14 rounded-full pointer-events-none"
                 style={{ background: `radial-gradient(circle, ${col}0D 0%, transparent 70%)` }} />
               <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-4"
                 style={{ background: `${col}18`, border: `1px solid ${col}28` }}>

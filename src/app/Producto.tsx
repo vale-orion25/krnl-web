@@ -64,7 +64,7 @@ function HeroProducto() {
   const ref = useRef<HTMLElement>(null);
   const inV = useInView(ref, { once: true, margin: "-60px" });
 
-  const models  = ["ChatGPT", "Claude", "Gemini", "Modelos locales"];
+  const models  = ["Modelo autorizado", "Modelo externo", "Modelo alterno", "Modelo privado"];
   const agents  = [
     { name: "Agente Legal",    s: "Activo",   c: "#22c55e" },
     { name: "Agente Finanzas", s: "Activo",   c: "#22c55e" },
@@ -72,10 +72,10 @@ function HeroProducto() {
     { name: "Agente TI",       s: "Activo",   c: "#22c55e" },
   ];
   const stats = [
-    { label: "Agentes activos",       value: "12" },
-    { label: "Políticas aplicadas",   value: "14" },
-    { label: "Automatizaciones",      value: "27" },
-    { label: "Dashboards",            value: "8"  },
+    { label: "Agentes gobernados",      status: "Activos", Icon: Bot },
+    { label: "Políticas centralizadas", status: "Activas", Icon: Shield },
+    { label: "Flujos centralizados",    status: "Activos", Icon: Workflow },
+    { label: "Dashboards conectados",   status: "Activos", Icon: BarChart3 },
   ];
 
   return (
@@ -124,7 +124,7 @@ function HeroProducto() {
             </div>
             <div className="flex items-center gap-1.5">
               <span className="w-1.5 h-1.5 rounded-full" style={{ background: "#22c55e" }} />
-              <span className="text-[10px]" style={{ color: B.textMuted }}>En vivo</span>
+              <span className="text-[10px]" style={{ color: B.textMuted }}>Conceptual</span>
             </div>
           </div>
 
@@ -177,9 +177,10 @@ function HeroProducto() {
               {/* Stats row */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
                 {stats.map((s) => (
-                  <div key={s.label} className="rounded-xl p-3" style={{ background: B.softBg, border: `1px solid ${B.borderSoft}` }}>
-                    <p className="text-[9px] mb-1" style={{ color: B.textMuted }}>{s.label}</p>
-                    <p className="text-[20px] font-[800]" style={{ color: B.text }}>{s.value}</p>
+                  <div key={s.label} className="rounded-xl p-3 flex flex-col items-center text-center gap-1.5" style={{ background: B.softBg, border: `1px solid ${B.borderSoft}` }}>
+                    <s.Icon className="w-4 h-4" style={{ color: B.purple }} strokeWidth={1.75} />
+                    <p className="text-[11px] font-[700] leading-snug" style={{ color: B.text }}>{s.label}</p>
+                    <span className="text-[9px] font-[600] uppercase tracking-wide" style={{ color: B.textMuted }}>{s.status}</span>
                   </div>
                 ))}
               </div>
@@ -218,7 +219,7 @@ function HeroProducto() {
             </div>
           </div>
           <p className="px-5 py-2.5 text-[9px]" style={{ color: B.textMuted, borderTop: `1px solid ${B.borderSoft}` }}>
-            Vista referencial · datos ilustrativos
+            Ejemplo conceptual de operación · no corresponde a métricas reales
           </p>
         </motion.div>
       </div>
@@ -434,7 +435,7 @@ function SectionArquitectura() {
           animate={{ scale: [1, 1.14, 1], opacity: [0.6, 1, 0.6] }}
           transition={{ duration: 14, repeat: Infinity, ease: "easeInOut", delay: 2 }} />
       </div>
-      <div className="relative z-10 max-w-[1200px] mx-auto px-5 md:px-10 py-14 md:py-20">
+      <div className="relative z-10 max-w-[1200px] mx-auto px-5 md:px-10 pt-14 md:pt-20 pb-8 md:pb-10">
         <motion.div className="text-center mb-12"
           initial={{ opacity: 0, y: 14 }} animate={inV ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.55, ease }}>
           <SectionLabel id="producto-arquitectura">Arquitectura</SectionLabel>
@@ -517,6 +518,61 @@ function SectionArquitectura() {
             </div>
           ))}
         </div>
+      </div>
+    </section>
+  );
+}
+
+// ── 4.5 CONSUMO GOBERNADO ─────────────────────────────────────────────────────
+const COSTOS_CAPACIDADES = [
+  { Icon: Bot,       title: "Consumo por agente",           desc: "Identifica qué agentes concentran mayor uso." },
+  { Icon: Users,     title: "Consumo por equipo",            desc: "Observa patrones por área, unidad o flujo de trabajo." },
+  { Icon: BarChart3, title: "Comparación por modelo",        desc: "Evalúa costo, rendimiento y conveniencia según tarea." },
+  { Icon: Activity,  title: "Trazabilidad por caso de uso",  desc: "Relaciona consumo con operación, contexto y resultado esperado." },
+];
+
+function SectionCostosGobernados() {
+  const ref = useRef<HTMLElement>(null);
+  const inV = useInView(ref, { once: true, amount: 0.15 });
+  return (
+    <section ref={ref} className="relative overflow-hidden" style={{ background: `linear-gradient(160deg, ${B.softBg} 0%, ${B.purpleSoft}25 100%)`, borderTop: `1px solid ${B.border}` }}>
+      <svg style={{ position: "absolute", width: 0, height: 0, overflow: "hidden" }} aria-hidden="true">
+        <defs>
+          <linearGradient id="costosIconGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#D4009A" />
+            <stop offset="100%" stopColor="#6D2BFF" />
+          </linearGradient>
+        </defs>
+      </svg>
+      <div className="relative max-w-[1160px] mx-auto px-5 md:px-10 pt-8 md:pt-10 pb-14 md:pb-20">
+        <motion.div className="text-center mb-12 max-w-[720px] mx-auto"
+          initial={{ opacity: 0, y: 14 }} animate={inV ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.55, ease }}>
+          <SectionLabel>Consumo gobernado</SectionLabel>
+          <h2 className="font-[800] mb-4" style={{ fontSize: "clamp(24px, 3vw, 38px)", color: B.text }}>
+            De gasto invisible a consumo gobernado.
+          </h2>
+          <p style={{ color: B.textSub, fontSize: 15.5, lineHeight: 1.65 }}>
+            KRNL separa el costo de plataforma del consumo variable de modelos y tokens, permitiendo monitorear uso por agente, equipo, modelo o caso de negocio. El objetivo no es prometer ahorro absoluto, sino entregar visibilidad, trazabilidad y control para decidir dónde conviene usar cada modelo.
+          </p>
+        </motion.div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+          {COSTOS_CAPACIDADES.map(({ Icon, title, desc }, i) => (
+            <motion.div key={title} className="rounded-xl p-5"
+              style={{ background: B.surface, border: `1px solid ${B.borderSoft}`, boxShadow: "0 1px 2px rgba(13,21,36,0.03)" }}
+              initial={{ opacity: 0, y: 14 }} animate={inV ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.4, delay: 0.15 + i * 0.22, ease }}
+              whileHover={{ y: -2, boxShadow: "0 6px 16px rgba(13,21,36,0.06)", transition: { duration: 0.2 } }}>
+              <Icon className="w-8 h-8 mb-4" style={{ stroke: "url(#costosIconGrad)", color: "transparent" }} strokeWidth={1.6} />
+              <p className="text-[13.5px] font-[700] mb-1.5" style={{ color: B.text }}>{title}</p>
+              <p className="text-[11.5px] leading-relaxed" style={{ color: B.textSub }}>{desc}</p>
+            </motion.div>
+          ))}
+        </div>
+
+        <p className="text-center text-[11.5px]" style={{ color: B.textMuted, maxWidth: 620, margin: "0 auto" }}>
+          El consumo de modelos o tokens depende del proveedor, volumen de uso, configuración y tipo de tarea.
+        </p>
       </div>
     </section>
   );
@@ -673,9 +729,9 @@ function SectionServicios() {
 const CAMINO_STAGES = [
   { title: "Acceso oficial a LLMs",     sub: "Gobernanza base",               desc: "Acceso controlado a ChatGPT, Claude, Gemini y modelos locales bajo política corporativa unificada.",   Icon: Globe    },
   { title: "RAG y conocimiento",        sub: "Agentes con contexto propio",    desc: "Knowledge base interna: documentos, bases vectoriales y fuentes propietarias persistentes.", Icon: Database },
-  { title: "Tools y sistemas reales",   sub: "Agentes que actúan",             desc: "Integración via MCP con CRM, ERP, SAP y sistemas internos. Los agentes ejecutan acciones.", Icon: Plug     },
-  { title: "Equipos de agentes",        sub: "Workflows colaborativos",        desc: "Múltiples agentes coordinados en flujos continuos para procesos complejos de alto valor.",  Icon: Workflow },
-  { title: "Fuerza laboral digital",    sub: "Agentes autónomos 24/7",         desc: "Flota de agentes operando de forma autónoma con supervisión, trazabilidad y gobierno activo.", Icon: Layers  },
+  { title: "Tools y sistemas reales",   sub: "Agentes que actúan",             desc: "Integración vía MCP con CRM, ERP, SAP y sistemas internos. Los agentes pueden ejecutar acciones bajo supervisión.", Icon: Plug     },
+  { title: "Equipos de agentes",        sub: "Workflows colaborativos",        desc: "Múltiples agentes que pueden coordinarse en flujos continuos para procesos complejos de alto valor.",  Icon: Workflow },
+  { title: "Fuerza laboral digital",    sub: "Agentes autónomos 24/7",         desc: "Flota de agentes que puede operar de forma autónoma bajo supervisión, trazabilidad y gobierno.", Icon: Layers  },
 ];
 const CAMINO_CENTER = 2;
 
@@ -752,7 +808,7 @@ function SectionCamino() {
             De un agente a una flota gobernada
           </h2>
           <p style={{ color: B.textSub, fontSize: 16, fontWeight: 300, maxWidth: 520, margin: "0 auto" }}>
-            KRNL crece con tu organización: empieza con acceso controlado y llega hasta equipos de agentes operando de forma autónoma y supervisada.
+            KRNL puede crecer con tu organización: empieza con acceso controlado y llega hasta equipos de agentes que pueden operar de forma autónoma y supervisada.
           </p>
         </motion.div>
 
@@ -939,6 +995,7 @@ export default function PaginaProducto() {
       <SectionSolucion />
       <SectionPropuesta />
       <SectionArquitectura />
+      <SectionCostosGobernados />
       <SectionServicios />
       <SectionCamino />
       <SectionPorQueKrnl />

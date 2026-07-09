@@ -49,6 +49,8 @@ const COLS: { title: string; links: { label: string; href: string; external?: bo
       { label: "Orión", href: "https://www.orion.global", external: true },
       { label: "Contacto", href: `#${pageToHash("contacto")}`, action: () => krnlNavigate("contacto") },
       { label: "info@orion.global", href: "mailto:info@orion.global", external: true },
+      { label: "Chile: +56 2 2640 3900", href: "tel:+56226403900", external: true },
+      { label: "Perú: +51 926 736 295", href: "tel:+51926736295", external: true },
     ],
   },
 ];

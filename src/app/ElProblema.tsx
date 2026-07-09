@@ -4,7 +4,7 @@ import {
   ArrowRight, AlertTriangle, EyeOff, ShieldOff, Database, Users, Bot,
   FileText, Activity, Lock, TrendingUp, GitBranch, Layers, CheckCircle2,
   X, Shield, Scale, DollarSign, Server, MessageSquare, Workflow, Eye,
-  ChevronDown, ShieldCheck,
+  ChevronDown, ShieldCheck, Info,
 } from "lucide-react";
 import { ImageWithFallback } from "@/app/components/figma/ImageWithFallback";
 import krnlLogo from "@/imports/krnl-logo-dark.png";
@@ -46,8 +46,8 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
 
 // ── HERO ───────────────────────────────────────────────────────────────────────
 const DEPTS = [
-  { name: "Legal",       Icon: Scale,    col: B.purple,  tool: "Claude",         warn: "Sin auditoría"    },
-  { name: "Finanzas",    Icon: TrendingUp, col: B.magenta, tool: "ChatGPT",       warn: "Sin trazabilidad" },
+  { name: "Legal",       Icon: Scale,    col: B.purple,  tool: "Modelo externo",    warn: "Sin auditoría"    },
+  { name: "Finanzas",    Icon: TrendingUp, col: B.magenta, tool: "Modelo autorizado", warn: "Sin trazabilidad" },
   { name: "TI",          Icon: Server,   col: "#0EA5E9", tool: "Scripts / APIs",  warn: "Sin control"      },
   { name: "RRHH",        Icon: Users,    col: "#22c55e", tool: "Chatbots",        warn: "Sin política"     },
   { name: "Operaciones", Icon: Workflow, col: B.amber,   tool: "Agentes + Sheets",warn: "Sin visibilidad"  },
@@ -165,7 +165,7 @@ function ChaosMapVisual({ inV }: { inV: boolean }) {
         ))}
       </div>
       <p className="px-4 py-2 text-[9px] leading-relaxed" style={{ color: B.textMuted, borderTop: `1px solid ${B.borderSoft}` }}>
-        Vista referencial · datos ilustrativos
+        Representación conceptual · datos ilustrativos
       </p>
     </div>
   );
@@ -319,8 +319,8 @@ function SectionTresRiesgos() {
 
 // ── SECTION 3 — MAPA SHADOW AI ────────────────────────────────────────────────
 const SHADOW_NODES = [
-  { name: "Legal",       Icon: Scale,      col: B.purple,   tool: "Claude",   x: 16, y: 13 },
-  { name: "Finanzas",    Icon: TrendingUp, col: B.magenta,  tool: "ChatGPT",   x: 84, y: 16 },
+  { name: "Legal",       Icon: Scale,      col: B.purple,   tool: "Modelo externo",    x: 16, y: 13 },
+  { name: "Finanzas",    Icon: TrendingUp, col: B.magenta,  tool: "Modelo autorizado", x: 84, y: 16 },
   { name: "RRHH",        Icon: Users,      col: "#22c55e",  tool: "Chatbots", x: 10, y: 68 },
   { name: "TI",          Icon: Server,     col: "#0EA5E9",  tool: "Scripts",  x: 90, y: 65 },
   { name: "Operaciones", Icon: Workflow,   col: B.amber,    tool: "Agentes",  x: 50, y: 91 },
@@ -456,26 +456,180 @@ function SectionMarcoRegulatorio() {
   return (
     <section ref={ref} className="relative overflow-hidden" style={{ background: B.surface, borderTop: `1px solid ${B.border}` }}>
       <SectionBackground variant="riesgos" />
-      <div className="relative max-w-[900px] mx-auto px-5 md:px-10 py-14 md:py-16">
-        <motion.div className="rounded-2xl p-6 md:p-8 flex flex-col md:flex-row items-start gap-5 md:gap-8"
-          style={{ background: "rgba(255,255,255,0.92)", border: `1px solid ${B.borderSoft}`, boxShadow: "0 2px 14px rgba(109,43,255,0.05)" }}
+
+      {/* Zona de color animada — concentrada abajo, movimiento notorio */}
+      <motion.div className="absolute pointer-events-none" style={{
+          bottom: "-22%", left: "-10%", width: 480, height: 480, borderRadius: "50%",
+          background: `radial-gradient(circle, ${B.magenta}3D 0%, ${B.purple}28 45%, transparent 72%)`,
+          filter: "blur(55px)",
+        }}
+        animate={{ x: [0, 60, 0], y: [0, -35, 0], scale: [1, 1.25, 1], opacity: [0.55, 1, 0.55] }}
+        transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }} />
+      <motion.div className="absolute pointer-events-none" style={{
+          bottom: "-24%", right: "-8%", width: 420, height: 420, borderRadius: "50%",
+          background: `radial-gradient(circle, ${LAVENDER}3D 0%, ${B.purple}26 45%, transparent 72%)`,
+          filter: "blur(55px)",
+        }}
+        animate={{ x: [0, -50, 0], y: [0, -30, 0], scale: [1, 1.2, 1], opacity: [0.5, 0.95, 0.5] }}
+        transition={{ duration: 12, repeat: Infinity, ease: "easeInOut", delay: 2 }} />
+
+      <div className="relative max-w-[900px] mx-auto px-5 md:px-10 pt-14 md:pt-16 pb-8 md:pb-10">
+        <svg style={{ position: "absolute", width: 0, height: 0, overflow: "hidden" }} aria-hidden="true">
+          <defs>
+            <linearGradient id="marcoRegulatorioIconGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#D4009A" />
+              <stop offset="100%" stopColor="#6D2BFF" />
+            </linearGradient>
+          </defs>
+        </svg>
+        <motion.div className="relative overflow-hidden rounded-2xl p-6 md:p-9 flex flex-col md:flex-row items-start gap-6 md:gap-9"
+          style={{
+            background: B.surface,
+            border: `1px solid ${B.borderSoft}`,
+            boxShadow: "0 4px 24px rgba(109,43,255,0.07)",
+          }}
           initial={{ opacity: 0, y: 18 }} animate={inV ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5, ease }}>
-          <div className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0"
-            style={{ background: `linear-gradient(135deg, ${B.purpleSoft}, ${B.magentaSoft})`, border: `1px solid ${B.border}` }}>
-            <ShieldCheck className="w-6 h-6" style={{ color: B.purple }} strokeWidth={1.75} />
-          </div>
-          <div>
-            <SectionLabel>Shadow AI + datos personales</SectionLabel>
-            <h3 className="text-[19px] md:text-[22px] font-[800] leading-snug mb-3" style={{ color: B.text }}>
+
+          {/* Línea lateral con degradado KRNL */}
+          <div className="absolute left-0 top-0 bottom-0 w-[3px]" style={{ background: `linear-gradient(180deg, ${B.magenta}, ${B.purple})` }} />
+
+          {/* Ícono — sin caja, protagonista, degradado KRNL */}
+          <ShieldCheck className="relative w-11 h-11 md:w-12 md:h-12 shrink-0" style={{ stroke: "url(#marcoRegulatorioIconGrad)", color: "transparent" }} strokeWidth={1.5} />
+
+          <div className="relative flex-1 min-w-0">
+            <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-[10.5px] font-[700] tracking-[0.14em] uppercase mb-4"
+              style={{ ...MONO, background: "rgba(255,255,255,0.75)", color: B.magenta, border: `1px solid ${B.magenta}25` }}>
+              <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: B.magenta }} />
+              Shadow AI + datos personales
+            </span>
+            <h3 className="text-[21px] md:text-[25px] font-[800] leading-snug mb-4" style={{ color: B.text }}>
               El Shadow AI también es un riesgo de datos personales.
             </h3>
-            <p className="text-[14px] leading-relaxed mb-3" style={{ color: B.textSub }}>
+            <p className="text-[14.5px] leading-relaxed mb-5" style={{ color: B.textSub, maxWidth: 640 }}>
               Cuando cada área usa IA por su cuenta, datos personales de clientes, colaboradores o candidatos pueden terminar en herramientas o cuentas fuera del control corporativo. La Ley 21.719 —vigente desde el 1 de diciembre de 2026— eleva las exigencias sobre el tratamiento de datos personales en Chile. KRNL fortalece la trazabilidad y el control sobre qué agentes y modelos acceden a qué datos, apoyando el gobierno de estos flujos.
             </p>
-            <p className="text-[11.5px] leading-relaxed" style={{ color: B.textMuted }}>
-              KRNL es una capa de gobierno operativo; el cumplimiento normativo específico depende de la implementación y del asesoramiento legal de cada organización.
-            </p>
+            <div className="flex items-start gap-2 pt-4" style={{ borderTop: `1px solid ${B.purple}18`, maxWidth: 640 }}>
+              <Info className="w-4 h-4 shrink-0 mt-0.5" style={{ color: B.textMuted }} strokeWidth={1.75} />
+              <p className="text-[11.5px] leading-relaxed" style={{ color: B.textMuted }}>
+                KRNL es una capa de gobierno operativo; el cumplimiento normativo específico depende de la implementación y del asesoramiento legal de cada organización.
+              </p>
+            </div>
           </div>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+// ── Fondo decorativo — red de nodos conectados, muy sutil, solo laterales ─────
+// 34 nodos: 17 en el margen izquierdo (0-16), 17 en el margen derecho (17-33).
+const MIT_NANDA_NET_NODES: [number, number, number][] = [
+  [30, 15, 2.0], [85, 55, 1.6], [20, 100, 2.2], [70, 145, 1.8], [110, 185, 1.6],
+  [35, 225, 2.0], [90, 265, 1.7], [18, 310, 2.3], [65, 350, 1.6], [115, 390, 1.8],
+  [30, 430, 2.0], [85, 470, 1.7], [20, 515, 2.2], [70, 555, 1.6], [110, 595, 1.8],
+  [40, 635, 2.0], [90, 665, 1.6],
+  [970, 15, 2.0], [915, 55, 1.6], [980, 100, 2.2], [930, 145, 1.8], [890, 185, 1.6],
+  [965, 225, 2.0], [910, 265, 1.7], [982, 310, 2.3], [935, 350, 1.6], [885, 390, 1.8],
+  [970, 430, 2.0], [915, 470, 1.7], [980, 515, 2.2], [930, 555, 1.6], [890, 595, 1.8],
+  [960, 635, 2.0], [910, 665, 1.6],
+];
+const MIT_NANDA_NET_EDGES: [number, number][] = [
+  // cadena secuencial — margen izquierdo
+  [0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 6], [6, 7], [7, 8],
+  [8, 9], [9, 10], [10, 11], [11, 12], [12, 13], [13, 14], [14, 15], [15, 16],
+  // enlaces cruzados — margen izquierdo (dan textura de malla, no de escalera)
+  [0, 3], [2, 5], [4, 7], [6, 9], [8, 11], [10, 13], [12, 15],
+  // cadena secuencial — margen derecho
+  [17, 18], [18, 19], [19, 20], [20, 21], [21, 22], [22, 23], [23, 24], [24, 25],
+  [25, 26], [26, 27], [27, 28], [28, 29], [29, 30], [30, 31], [31, 32], [32, 33],
+  // enlaces cruzados — margen derecho
+  [17, 20], [19, 22], [21, 24], [23, 26], [25, 28], [27, 30], [29, 32],
+];
+const MIT_NANDA_NET_PULSE = [1, 5, 9, 13, 18, 22, 26, 30];
+const LAVENDER = "#A78BFA";
+
+function MitNandaNetworkBg() {
+  const reduced = useReducedMotion();
+  const nodeColor = (i: number) => (i % 3 === 0 ? B.magenta : i % 3 === 1 ? B.purple : LAVENDER);
+  return (
+    <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 1000 680"
+      preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      {MIT_NANDA_NET_EDGES.map(([a, b], i) => {
+        const [x1, y1] = MIT_NANDA_NET_NODES[a];
+        const [x2, y2] = MIT_NANDA_NET_NODES[b];
+        return (
+          <line key={i} x1={x1} y1={y1} x2={x2} y2={y2}
+            stroke="url(#mitNandaNetGrad)" strokeWidth="0.6" opacity={0.14} />
+        );
+      })}
+      <defs>
+        <linearGradient id="mitNandaNetGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor={B.magenta} />
+          <stop offset="100%" stopColor={B.purple} />
+        </linearGradient>
+      </defs>
+      {MIT_NANDA_NET_NODES.map(([x, y, r], i) => (
+        <motion.circle key={i} cx={x} cy={y} r={r} fill={nodeColor(i)}
+          initial={{ opacity: 0.16 }}
+          animate={
+            reduced || !MIT_NANDA_NET_PULSE.includes(i)
+              ? { opacity: 0.16 }
+              : { opacity: [0.16, 0.34, 0.16] }
+          }
+          transition={{ duration: 8 + i * 0.5, repeat: Infinity, ease: "easeInOut", delay: i * 0.35 }} />
+      ))}
+    </svg>
+  );
+}
+
+// ── SECTION 3.6 — EVIDENCIA DE MERCADO (MIT NANDA) ────────────────────────────
+const MIT_NANDA_STATS = [
+  { value: "95%",  label: "sin retorno medible en P&L" },
+  { value: "5%",   label: "llega a producción con impacto" },
+  { value: "300+", label: "iniciativas analizadas" },
+];
+
+function SectionMitNanda() {
+  const ref = useRef<HTMLElement>(null);
+  const inV = useInView(ref, { once: true, amount: 0.15 });
+  return (
+    <section ref={ref} className="relative overflow-hidden" style={{ background: B.surface, borderTop: `1px solid ${B.border}` }}>
+      <MitNandaNetworkBg />
+      <div className="relative max-w-[980px] mx-auto px-5 md:px-10 pt-8 md:pt-10 pb-8 md:pb-10">
+        <motion.div className="text-center mb-10"
+          initial={{ opacity: 0, y: 14 }} animate={inV ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.55, ease }}>
+          <SectionLabel>Evidencia de mercado</SectionLabel>
+          <h2 className="font-[800] mb-4" style={{ fontSize: "clamp(22px, 2.8vw, 34px)", color: B.text, lineHeight: 1.22 }}>
+            La adopción de IA no es el problema. El problema es llevarla a producción con impacto.
+          </h2>
+          <p style={{ color: B.textSub, fontSize: 15.5, lineHeight: 1.65, maxWidth: 720, margin: "0 auto" }}>
+            Según MIT NANDA, pese a miles de millones invertidos en GenAI, la mayoría de las organizaciones no logra retorno medible y solo una fracción de herramientas enterprise llega a producción con impacto. La brecha no está en probar IA, sino en operarla con contexto, aprendizaje, integración, trazabilidad y control.
+          </p>
+        </motion.div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-5">
+          {MIT_NANDA_STATS.map(({ value, label }, i) => (
+            <motion.div key={value} className="rounded-2xl p-6 text-center"
+              style={{ background: B.surface, border: "1px solid #E6E8F0", boxShadow: "0 2px 12px rgba(15,10,40,0.04)" }}
+              initial={{ opacity: 0, y: 16 }} animate={inV ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.4, delay: 0.15 + i * 0.22, ease }}>
+              <p className="font-[800] mb-2" style={{ fontSize: 40, lineHeight: 1, background: GRAD, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>{value}</p>
+              <p className="text-[12.5px] leading-snug" style={{ color: B.textSub }}>{label}</p>
+            </motion.div>
+          ))}
+        </div>
+
+        <p className="text-center text-[11px] mb-8" style={{ color: B.textMuted }}>
+          Fuente: MIT NANDA, State of AI in Business 2025.
+        </p>
+
+        <motion.div className="rounded-2xl p-5 md:p-6 flex items-start gap-3 mx-auto"
+          style={{ maxWidth: 720, background: B.purpleSoft, border: `1px solid ${B.purple}25` }}
+          initial={{ opacity: 0, y: 12 }} animate={inV ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5, delay: 0.55, ease }}>
+          <Shield className="w-5 h-5 shrink-0 mt-0.5" style={{ color: B.purple }} strokeWidth={1.75} />
+          <p className="text-[13.5px] leading-relaxed" style={{ color: B.text }}>
+            KRNL aborda esta brecha desde gobierno, memoria, control de modelos, trazabilidad y operación integrada.
+          </p>
         </motion.div>
       </div>
     </section>
@@ -512,7 +666,7 @@ function SectionConsecuencias() {
   return (
     <section ref={ref} className="relative overflow-hidden" style={{ background: B.surface, borderTop: `1px solid ${B.border}` }}>
       <SectionBackground variant="riesgos" />
-      <div className="relative max-w-[1200px] mx-auto px-5 md:px-10 py-14 md:py-20">
+      <div className="relative max-w-[1200px] mx-auto px-5 md:px-10 pt-8 md:pt-10 pb-14 md:pb-20">
         <motion.div className="text-center mb-12"
           initial={{ opacity: 0, y: 14 }} animate={inV ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.55, ease }}>
           <SectionLabel>Consecuencias para el negocio</SectionLabel>
@@ -628,14 +782,18 @@ function SectionAntesKrnl() {
             {/* Centro: iso KRNL — la capa que conecta, sin caja ni fondo sólido */}
             <motion.div className="relative lg:w-[190px] shrink-0 flex flex-col items-center text-center py-2"
               initial={{ opacity: 0, scale: 0.94 }} animate={inV ? { opacity: 1, scale: 1 } : {}} transition={{ duration: 0.5, delay: 0.15, ease }}>
-              {/* Halo muy sutil detrás del iso */}
-              <div className="absolute pointer-events-none" style={{
+              {/* Halo — pulsa en sincro con el flotado del ícono */}
+              <motion.div className="absolute pointer-events-none" style={{
                 top: "50%", left: "50%", transform: "translate(-50%, -58%)",
                 width: 273, height: 273, borderRadius: "50%",
                 background: `radial-gradient(circle, ${B.purple}20 0%, ${B.magenta}12 45%, transparent 72%)`,
                 filter: "blur(18px)",
-              }} />
-              <img src={krnlIso} alt="KRNL" className="relative" style={{ width: 116, height: 116, objectFit: "contain" }} />
+              }}
+                animate={{ scale: [1, 1.16, 1], opacity: [0.6, 1, 0.6] }}
+                transition={{ duration: 3.4, repeat: Infinity, ease: "easeInOut" }} />
+              <motion.img src={krnlIso} alt="KRNL" className="relative" style={{ width: 116, height: 116, objectFit: "contain" }}
+                animate={{ y: [0, -12, 0], scale: [1, 1.05, 1] }}
+                transition={{ duration: 3.4, repeat: Infinity, ease: "easeInOut" }} />
               <p className="relative font-[700] leading-tight mt-3" style={{ fontSize: 13, color: B.text }}>KRNL ordena</p>
             </motion.div>
 
@@ -707,6 +865,7 @@ function SectionPuntoQuiebre() {
         </motion.div>
 
         {/* Maturity line — solo el problema, sin la respuesta mezclada */}
+        <div className="relative">
         <div className="overflow-x-auto">
         <div className="relative min-w-[560px] md:min-w-0">
           <div className="absolute top-7 left-0 right-0 h-px" style={{ background: B.border }} />
@@ -729,7 +888,7 @@ function SectionPuntoQuiebre() {
               return (
                 <div key={num} className="flex flex-col items-center">
                   <motion.div className="w-14 h-14 rounded-full flex items-center justify-center z-10 relative mb-4"
-                    style={{ background: `${col}12`, border: `1.5px solid ${col}45` }}
+                    style={{ background: B.surface, border: `1.5px solid ${col}45`, boxShadow: `0 0 0 4px ${B.surface}` }}
                     initial={{ opacity: 0, scale: 0.6 }}
                     animate={inV ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.6 }}
                     transition={{ delay: baseDelay, duration: 0.4, ease }}
@@ -748,6 +907,9 @@ function SectionPuntoQuiebre() {
             })}
           </div>
         </div>
+        </div>
+        {/* Pista de scroll horizontal — solo mobile, donde el timeline no entra completo */}
+        <div className="md:hidden pointer-events-none absolute top-0 right-0 h-full" style={{ width: 36, background: `linear-gradient(90deg, transparent, ${B.surface})` }} />
         </div>
 
         {/* Punto de quiebre — bloque destacado, separado del timeline */}
@@ -877,6 +1039,7 @@ export default function PaginaElProblema() {
       <SectionTresRiesgos />
       <SectionShadowAIMap />
       <SectionMarcoRegulatorio />
+      <SectionMitNanda />
       <SectionConsecuencias />
       <SectionAntesKrnl />
       <SectionPuntoQuiebre />

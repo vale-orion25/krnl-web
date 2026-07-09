@@ -65,9 +65,9 @@ const HERO_PIPELINE = [
 ];
 
 const MODEL_BARS = [
-  { name: "ChatGPT",    w: "65%", col: B.purple  },
-  { name: "Claude",w: "42%", col: B.magenta },
-  { name: "Modelo local",w:"28%", col: B.sky     },
+  { name: "Modelo autorizado", w: "65%", col: B.purple  },
+  { name: "Modelo externo",    w: "42%", col: B.magenta },
+  { name: "Modelo privado",    w: "28%", col: B.sky     },
 ];
 
 function GovControlCenter({ inV }: { inV: boolean }) {
@@ -84,21 +84,22 @@ function GovControlCenter({ inV }: { inV: boolean }) {
         <div className="ml-auto flex items-center gap-1.5">
           <motion.span className="w-1.5 h-1.5 rounded-full" style={{ background: B.green }}
             animate={{ opacity: [1, 0.4, 1] }} transition={{ duration: 2, repeat: Infinity }} />
-          <span className="text-[10px] font-[600]" style={{ color: B.green }}>Sistema activo</span>
+          <span className="text-[10px] font-[600]" style={{ color: B.green }}>Capa de gobierno</span>
         </div>
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 p-4 pb-3">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 p-5 pb-3">
         {[
-          { label: "Políticas activas", val: "12", col: B.purple, bg: B.purpleSoft },
-          { label: "Guardrails",        val: "8",  col: B.magenta, bg: B.magentaSoft },
-          { label: "Agentes activos",   val: "14", col: B.sky, bg: `${B.sky}15` },
-        ].map(({ label, val, col, bg }) => (
-          <div key={label} className="rounded-xl px-3 py-2.5 text-center"
+          { label: "Políticas centralizadas",  status: "Activas",  Icon: Shield, col: B.purple, bg: B.purpleSoft },
+          { label: "Guardrails configurables", status: "Activos",  Icon: Lock,   col: B.magenta, bg: B.magentaSoft },
+          { label: "Agentes gobernados",       status: "Activos",  Icon: Users,  col: B.sky, bg: `${B.sky}15` },
+        ].map(({ label, status, Icon, col, bg }) => (
+          <div key={label} className="rounded-xl px-3 py-3.5 flex flex-col items-center text-center gap-1.5"
             style={{ background: bg }}>
-            <p className="text-[20px] font-[800]" style={{ color: col }}>{val}</p>
-            <p className="text-[9px] font-[500]" style={{ color: B.textMuted }}>{label}</p>
+            <Icon className="w-4 h-4" style={{ color: col }} strokeWidth={1.8} />
+            <p className="text-[12px] font-[700] leading-snug" style={{ color: col }}>{label}</p>
+            <span className="text-[9px] font-[600] uppercase tracking-wide" style={{ color: B.textMuted }}>{status}</span>
           </div>
         ))}
       </div>
@@ -107,15 +108,15 @@ function GovControlCenter({ inV }: { inV: boolean }) {
       <div className="px-4 pb-4">
         <p className="text-[9px] font-[700] tracking-[0.16em] uppercase mb-3" style={{ ...MONO, color: B.textMuted }}>Ruta de cada interacción</p>
         <div className="relative flex items-start justify-between px-1">
-          <div className="absolute h-px" style={{ top: 15, left: 15, right: 15, background: B.borderSoft }} />
+          <div className="absolute h-px" style={{ top: 17, left: 15, right: 15, background: B.borderSoft }} />
           {HERO_PIPELINE.map(({ label, Icon }, i) => (
             <motion.div key={label} className="relative z-10 flex flex-col items-center gap-1.5" style={{ width: `${100 / HERO_PIPELINE.length}%` }}
               initial={{ opacity: 0, y: 6 }} animate={inV ? { opacity: 1, y: 0 } : {}}
               transition={{ delay: 0.45 + i * 0.07, duration: 0.35, ease }}>
-              <div className="flex items-center justify-center rounded-full shrink-0" style={{ width: 30, height: 30, background: B.surface, border: `1.5px solid ${B.purpleSoft}` }}>
-                <Icon className="w-3.5 h-3.5" style={{ color: B.purple }} strokeWidth={1.8} />
+              <div className="flex items-center justify-center rounded-full shrink-0" style={{ width: 34, height: 34, background: B.surface, border: `1.5px solid ${B.purpleSoft}` }}>
+                <Icon className="w-4 h-4" style={{ color: B.purple }} strokeWidth={1.8} />
               </div>
-              <span className="text-[8px] font-[600] text-center leading-none" style={{ color: B.textMuted }}>{label}</span>
+              <span className="text-[9px] font-[600] text-center leading-none" style={{ color: B.textMuted }}>{label}</span>
             </motion.div>
           ))}
         </div>
@@ -124,11 +125,11 @@ function GovControlCenter({ inV }: { inV: boolean }) {
       {/* Model usage */}
       <div className="px-4 pb-4">
         <p className="text-[9px] font-[700] tracking-[0.16em] uppercase mb-2" style={{ ...MONO, color: B.textMuted }}>Uso por modelo</p>
-        <div className="flex flex-col gap-1.5">
+        <div className="flex flex-col gap-2">
           {MODEL_BARS.map(({ name, w, col }, i) => (
             <div key={name} className="flex items-center gap-2">
-              <span className="text-[10px] w-[80px] shrink-0 truncate" style={{ color: B.textSub }}>{name}</span>
-              <div className="flex-1 h-1.5 rounded-full" style={{ background: B.border }}>
+              <span className="text-[11px] w-[124px] shrink-0 truncate" style={{ color: B.textSub }}>{name}</span>
+              <div className="flex-1 h-2 rounded-full" style={{ background: B.border }}>
                 <motion.div className="h-full rounded-full"
                   style={{ background: col }}
                   initial={{ width: "0%" }} animate={inV ? { width: w } : {}}
@@ -140,12 +141,12 @@ function GovControlCenter({ inV }: { inV: boolean }) {
       </div>
 
       {/* Alert */}
-      <div className="mx-4 mb-4 flex items-center gap-2 rounded-xl px-3 py-2"
+      <div className="mx-4 mb-4 flex items-center gap-2 rounded-xl px-3 py-2.5"
         style={{ background: B.amberSoft, border: `1px solid ${B.amber}25` }}>
-        <AlertTriangle className="w-3.5 h-3.5 shrink-0" style={{ color: B.amber }} strokeWidth={1.75} />
-        <p className="text-[10px]" style={{ color: B.textSub }}>1 interacción en revisión humana activa</p>
+        <AlertTriangle className="w-4 h-4 shrink-0" style={{ color: B.amber }} strokeWidth={1.75} />
+        <p className="text-[11px]" style={{ color: B.textSub }}>1 interacción en revisión humana activa</p>
       </div>
-      <p className="px-4 pb-3 text-[9px] font-[500]" style={{ color: B.textMuted }}>Vista referencial · datos ilustrativos</p>
+      <p className="px-4 pb-3 text-[9px] font-[500]" style={{ color: B.textMuted }}>Ejemplo conceptual de operación · no corresponde a métricas reales</p>
     </div>
   );
 }
@@ -184,7 +185,7 @@ function HeroGobierno() {
           <motion.p className="mb-9 leading-relaxed"
             style={{ fontSize: 16, color: B.textSub, maxWidth: 460 }}
             initial={{ opacity: 0, y: 12 }} animate={inV ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.55, delay: 0.18, ease }}>
-            KRNL aplica políticas, validaciones, trazabilidad y supervisión humana sobre cada interacción de IA empresarial.
+            KRNL propone una capa de políticas, validaciones, trazabilidad y supervisión humana sobre cada interacción de IA empresarial.
           </motion.p>
 
         </div>
@@ -201,16 +202,16 @@ function HeroGobierno() {
 const FLUJO_STAGES = [
   { num: "01", label: "Usuario / Sistema",   detail: "Cualquier persona, agente o sistema puede iniciar una solicitud.", Icon: Users        },
   { num: "02", label: "Policy Engine KRNL",  detail: "Revisa permisos y nivel de riesgo antes de continuar.",           Icon: Shield       },
-  { num: "03", label: "Modelo autorizado",   detail: "La solicitud se enruta solo al modelo permitido para esa tarea.", Icon: Box          },
-  { num: "04", label: "Respuesta validada",  detail: "La respuesta pasa una verificación final antes de salir.",       Icon: CheckCircle2 },
-  { num: "05", label: "Registro auditable",  detail: "Cada paso queda guardado, con evidencia disponible después.",    Icon: FileText     },
+  { num: "03", label: "Modelo autorizado",        detail: "La solicitud puede enrutarse al modelo autorizado según la política aplicable.", Icon: Box          },
+  { num: "04", label: "Validación bajo política", detail: "La respuesta puede pasar por una verificación antes de salir.",                 Icon: CheckCircle2 },
+  { num: "05", label: "Registro auditable",       detail: "Cada interacción puede quedar registrada, con evidencia disponible después.",   Icon: FileText     },
 ];
 
 const FLUJO_ARROW_POSITIONS = [24.8, 41.6, 58.4, 75.2]; // % — puntos medios entre los 5 nodos (línea 8%–92%)
 
 const DECISION_ROWS: { label: string; value: string; isStatus?: boolean; sc?: string; sb?: string }[] = [
   { label: "Política aplicada", value: "Confidencialidad Legal" },
-  { label: "Modelo autorizado", value: "Claude" },
+  { label: "Modelo autorizado", value: "Modelo externo" },
   { label: "Riesgo detectado",  value: "Medio",            isStatus: true, sc: B.amber, sb: B.amberSoft },
   { label: "Acción",            value: "Revisión humana",  isStatus: true, sc: B.amber, sb: B.amberSoft },
   { label: "Evidencia",         value: "Log generado",     isStatus: true, sc: B.green, sb: B.greenSoft },
@@ -273,7 +274,7 @@ function SectionFlujoGobernado() {
   const reduced = useReducedMotion();
   return (
     <section ref={ref} id="gobierno-que-gobierna" className="relative overflow-hidden" style={{ background: `linear-gradient(160deg, ${B.softBg} 0%, ${B.purpleSoft}25 100%)`, borderTop: `1px solid ${B.border}` }}>
-      <div className="max-w-[1200px] mx-auto px-5 md:px-10 py-16 md:py-24">
+      <div className="max-w-[1200px] mx-auto px-5 md:px-10 pt-16 md:pt-24 pb-8 md:pb-10">
         <motion.div className="text-center mb-12"
           initial={{ opacity: 0, y: 14 }} animate={inV ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.55, ease }}>
           <SectionLabel>Flujo gobernado</SectionLabel>
@@ -281,7 +282,7 @@ function SectionFlujoGobernado() {
             El flujo gobernado
           </h2>
           <p style={{ color: B.textSub, fontSize: 16, fontWeight: 300, maxWidth: 560, margin: "0 auto" }}>
-            Cada solicitud sigue el mismo circuito antes de llegar a un resultado: se valida, se ejecuta y queda registrada.
+            Cada solicitud puede seguir un circuito de gobierno antes de llegar a un resultado: puede validarse, ejecutarse y quedar registrada según políticas.
           </p>
         </motion.div>
 
@@ -339,7 +340,7 @@ function SectionFlujoGobernado() {
             style={{ background: `linear-gradient(135deg, ${B.text} 0%, #1B2438 100%)` }}>
             <motion.span className="w-2 h-2 rounded-full" style={{ background: "#22c55e" }}
               animate={{ opacity: [1, 0.4, 1] }} transition={{ duration: 2, repeat: Infinity }} />
-            <p className="text-[11.5px] font-[700] uppercase tracking-[0.16em]" style={{ ...MONO, color: "#fff" }}>Decisión tomada por KRNL</p>
+            <p className="text-[11.5px] font-[700] uppercase tracking-[0.16em]" style={{ ...MONO, color: "#fff" }}>Ejemplo de decisión gobernada</p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-10 px-6 md:px-8 py-3">
             {DECISION_ROWS.map(({ label, value, isStatus, sc, sb }) => (
@@ -354,7 +355,7 @@ function SectionFlujoGobernado() {
             ))}
           </div>
           <div className="flex items-center justify-between px-6 md:px-8 py-3" style={{ borderTop: `1px solid ${B.borderSoft}`, background: B.softBg }}>
-            <p className="text-[10px]" style={{ color: B.textMuted }}>Vista referencial · datos ilustrativos</p>
+            <p className="text-[10px]" style={{ color: B.textMuted }}>Ejemplo conceptual de operación · no corresponde a métricas reales</p>
             <span className="inline-flex items-center gap-1 text-[11px] font-[600]" style={{ color: B.purple }}>
               Ver evidencia <ArrowRight className="w-3 h-3" strokeWidth={2.2} />
             </span>
@@ -367,10 +368,10 @@ function SectionFlujoGobernado() {
 
 // ── 2.5 GOBIERNO PREPARADO PARA AUDITORÍA, DATOS Y CONTROL EMPRESARIAL ────────
 const GOBIERNO_PILARES = [
-  { Icon: Shield,   title: "Políticas",    desc: "Define qué puede hacer cada agente, modelo o flujo de trabajo." },
-  { Icon: Lock,     title: "Accesos",      desc: "Controla quién puede usar qué datos, modelos, agentes o herramientas." },
-  { Icon: Activity, title: "Trazabilidad", desc: "Registra qué ocurrió, cuándo, con qué modelo y bajo qué regla." },
-  { Icon: FileText, title: "Evidencia",    desc: "Deja registros disponibles para revisión interna, TI, legal, compliance o auditoría." },
+  { Icon: Shield,   title: "Políticas",    desc: "Puede definir qué hace cada agente, modelo o flujo de trabajo." },
+  { Icon: Lock,     title: "Accesos",      desc: "Permite controlar quién usa qué datos, modelos, agentes o herramientas." },
+  { Icon: Activity, title: "Trazabilidad", desc: "Cada interacción puede quedar registrada, con modelo y regla asociados." },
+  { Icon: FileText, title: "Evidencia",    desc: "Puede dejar registros disponibles para revisión interna, TI, legal, compliance o auditoría." },
 ];
 
 const EVIDENCIA_DISPONIBLE = [
@@ -382,11 +383,11 @@ const EVIDENCIA_DISPONIBLE = [
 
 function SectionGobiernoPreparado() {
   const ref = useRef<HTMLElement>(null);
-  const inV = useInView(ref, { once: true, margin: "-220px" });
+  const inV = useInView(ref, { once: true, amount: 0.15 });
   return (
     <section ref={ref} className="relative overflow-hidden" style={{ background: B.surface, borderTop: `1px solid ${B.border}` }}>
       <SectionBackground variant="gobierno" />
-      <div className="relative max-w-[1160px] mx-auto px-5 md:px-10 pt-10 md:pt-14 pb-14 md:pb-20">
+      <div className="relative max-w-[1160px] mx-auto px-5 md:px-10 pt-6 md:pt-8 pb-14 md:pb-20">
         <div className="grid grid-cols-1 lg:grid-cols-[0.85fr_1.15fr] gap-10 lg:gap-14 items-start">
 
           {/* Columna izquierda — narrativa + CTA */}
@@ -463,16 +464,16 @@ function SectionGobiernoPreparado() {
 
 // ── 3. QUÉ CONTROLA KRNL — capacidades, no proceso ────────────────────────────
 const CONTROLA_ITEMS = [
-  { Icon: Shield,     title: "Políticas",      desc: "Define qué agentes, modelos y datos puede usar cada área." },
+  { Icon: Shield,     title: "Políticas",      desc: "Permite definir qué agentes, modelos y datos puede usar cada área." },
   { Icon: Lock,       title: "Guardrails",     desc: "Ayuda a frenar acciones fuera de regla antes de que lleguen al usuario o sistema." },
-  { Icon: FileText,   title: "Auditoría",      desc: "Registra entradas, salidas, modelos usados y decisiones." },
+  { Icon: FileText,   title: "Auditoría",      desc: "Entradas, salidas, modelos usados y decisiones pueden quedar registrados." },
   { Icon: DollarSign, title: "Costos",         desc: "Permite ver consumo por modelo, agente, área o caso de uso." },
-  { Icon: Eye,        title: "Control humano", desc: "Escala acciones críticas a revisión antes de ejecutarlas." },
+  { Icon: Eye,        title: "Control humano", desc: "Puede escalar acciones críticas a revisión antes de ejecutarlas." },
 ];
 
 function SectionQueControlaKrnl() {
   const ref = useRef<HTMLElement>(null);
-  const inV = useInView(ref, { once: true, margin: "-220px" });
+  const inV = useInView(ref, { once: true, amount: 0.15 });
 
   return (
     <section ref={ref} id="gobierno-guardrails" className="relative overflow-hidden" style={{ background: `linear-gradient(160deg, ${B.softBg} 0%, ${B.purpleSoft}25 100%)`, borderTop: `1px solid ${B.border}` }}>
@@ -508,10 +509,10 @@ function SectionQueControlaKrnl() {
 
 // ── 4. EVIDENCIA OPERATIVA ────────────────────────────────────────────────────
 const EVIDENCIA_ROWS = [
-  { time: "14:32", area: "Legal",    agent: "Agente Contratos", model: "Claude",       policy: "Confidencialidad Legal",     status: "Revisión humana", sc: B.amber,   sb: B.amberSoft },
-  { time: "14:21", area: "Finanzas", agent: "Análisis Gastos",  model: "ChatGPT",      policy: "Política de costos",         status: "Permitido",       sc: B.green,   sb: B.greenSoft },
-  { time: "14:09", area: "RR.HH.",   agent: "Onboarding",       model: "Modelo local", policy: "Política de RR.HH.",         status: "Permitido",       sc: B.green,   sb: B.greenSoft },
-  { time: "13:54", area: "Soporte",  agent: "Agente Tickets",   model: "ChatGPT",      policy: "Política de acceso a datos", status: "Bloqueado",       sc: B.magenta, sb: B.magentaSoft },
+  { time: "14:32", area: "Legal",    agent: "Agente Contratos", model: "Modelo externo",    policy: "Confidencialidad Legal",     status: "Revisión humana", sc: B.amber,   sb: B.amberSoft },
+  { time: "14:21", area: "Finanzas", agent: "Análisis Gastos",  model: "Modelo autorizado", policy: "Política de costos",         status: "Permitido",       sc: B.green,   sb: B.greenSoft },
+  { time: "14:09", area: "RR.HH.",   agent: "Onboarding",       model: "Modelo privado",    policy: "Política de RR.HH.",         status: "Permitido",       sc: B.green,   sb: B.greenSoft },
+  { time: "13:54", area: "Soporte",  agent: "Agente Tickets",   model: "Modelo autorizado", policy: "Política de acceso a datos", status: "Bloqueado",       sc: B.magenta, sb: B.magentaSoft },
 ];
 
 function SectionEvidenciaOperativa() {
@@ -527,13 +528,15 @@ function SectionEvidenciaOperativa() {
             Trazabilidad diseñada para cada decisión
           </h2>
           <p style={{ color: B.textSub, fontSize: 15, maxWidth: 520, margin: "0 auto" }}>
-            KRNL registra quién ejecutó qué, con qué modelo, bajo qué política y con qué resultado.
+            KRNL propone un modelo de trazabilidad de quién ejecutó qué, con qué modelo, bajo qué política y con qué resultado.
           </p>
         </motion.div>
 
-        <motion.div className="rounded-2xl overflow-hidden"
+        <motion.div className="relative rounded-2xl overflow-hidden"
           style={{ background: B.surface, border: `1px solid ${B.borderSoft}`, boxShadow: "0 2px 16px rgba(109,43,255,0.05)" }}
           initial={{ opacity: 0, y: 16 }} animate={inV ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.55, ease }}>
+          {/* Pista de scroll horizontal — solo mobile, donde la tabla no entra completa */}
+          <div className="md:hidden pointer-events-none absolute top-0 right-0 z-10" style={{ width: 32, height: "100%", background: `linear-gradient(90deg, transparent, ${B.surface})` }} />
           <div className="overflow-x-auto">
           <div className="min-w-[680px]">
           <div className="grid px-6 py-3" style={{ gridTemplateColumns: "70px 1fr 1fr 1fr 1fr 120px", borderBottom: `1.5px solid ${B.borderSoft}`, background: B.softBg }}>
@@ -572,7 +575,7 @@ function SectionEvidenciaOperativa() {
           </div>
         </motion.div>
         <p className="text-center mt-3 text-[10px]" style={{ color: B.textMuted }}>
-          Vista referencial · datos ilustrativos
+          Ejemplo conceptual de operación · no corresponde a métricas reales
         </p>
       </div>
     </section>

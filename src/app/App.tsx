@@ -79,30 +79,30 @@ const PANELS = [
     ],
   },
   {
-    title: "Capa de operación", sub: "Todo integrado, todo conectado.", tone: "ok",
+    title: "Capa de operación", sub: "Una capa para integrar y conectar.", tone: "ok",
     items: [
-      { Icon: Link2,   t: "Agentes conectados", d: "12 agentes operando en una capa común." },
-      { Icon: Box,     t: "Modelos registrados", d: "8 modelos bajo un catálogo único." },
-      { Icon: Boxes,   t: "Sistemas integrados", d: "15 sistemas conectados de forma segura." },
-      { Icon: Workflow, t: "Flujos activos",     d: "27 automatizaciones centralizadas." },
+      { Icon: Link2,   t: "Agentes conectados", d: "Agentes que pueden operar bajo gobierno en una capa común." },
+      { Icon: Box,     t: "Modelos registrados", d: "Modelos organizables en un catálogo único." },
+      { Icon: Boxes,   t: "Sistemas integrados", d: "Sistemas que pueden conectarse de forma segura." },
+      { Icon: Workflow, t: "Flujos activos",     d: "Automatizaciones que pueden centralizarse." },
     ],
   },
   {
-    title: "Gobierno activo", sub: "Reglas y control en tiempo real.", tone: "gov",
+    title: "Gobierno bajo política", sub: "Reglas y control según política.", tone: "gov",
     items: [
-      { Icon: Shield,       t: "Políticas",      d: "14 reglas aplicadas a cada interacción." },
-      { Icon: CheckCircle2, t: "Validación",     d: "99.8% de respuestas revisadas." },
-      { Icon: FileText,     t: "Auditoría",      d: "Registro inmutable de 30 días." },
-      { Icon: Activity,     t: "Trazabilidad",   d: "12.4k logs de uso registrados." },
+      { Icon: Shield,       t: "Políticas",      d: "Reglas que pueden aplicarse a cada interacción." },
+      { Icon: CheckCircle2, t: "Validación",     d: "Respuestas que pueden revisarse bajo política." },
+      { Icon: FileText,     t: "Auditoría",      d: "Retención de registros configurable." },
+      { Icon: Activity,     t: "Trazabilidad",   d: "Uso que puede quedar registrado y trazado." },
     ],
   },
   {
     title: "Operación estable", sub: "Escala segura y controlada.", tone: "ok",
     items: [
-      { Icon: Shield,       t: "Cumplimiento",     d: "100% de interacciones bajo política." },
-      { Icon: Activity,     t: "Interacciones",    d: "14.8k procesadas con trazabilidad." },
-      { Icon: CheckCircle2, t: "Incidentes",       d: "0 incidentes sin resolver." },
-      { Icon: Boxes,        t: "Modelos activos",  d: "12 modelos gobernados y escalando." },
+      { Icon: Shield,       t: "Cumplimiento",     d: "Interacciones bajo política." },
+      { Icon: Activity,     t: "Interacciones",    d: "Pueden procesarse con trazabilidad de extremo a extremo." },
+      { Icon: CheckCircle2, t: "Incidentes",       d: "Incidentes bajo seguimiento continuo." },
+      { Icon: Boxes,        t: "Modelos activos",  d: "Modelos que pueden gobernarse y escalar." },
     ],
   },
 ];
@@ -110,9 +110,9 @@ const PANELS = [
 // ── Timeline ─────────────────────────────────────────────────────────────────
 const STEPS = [
   { num: "01", title: "IA dispersa",   desc: "La IA crece sin control en silos y herramientas desconectadas." },
-  { num: "02", title: "Conexión",      desc: "KRNL organiza y conecta agentes, modelos, datos y sistemas." },
-  { num: "03", title: "Gobierno",      desc: "KRNL gobierna con reglas claras y supervisión activa." },
-  { num: "04", title: "Escala segura", desc: "IA operando con visibilidad, seguridad y control empresarial." },
+  { num: "02", title: "Conexión",      desc: "KRNL propone organizar y conectar agentes, modelos, datos y sistemas." },
+  { num: "03", title: "Gobierno",      desc: "La operación puede gobernarse con reglas claras y supervisión humana." },
+  { num: "04", title: "Escala segura", desc: "IA que puede operar con visibilidad, seguridad y control empresarial." },
 ];
 const STEP_TARGETS = [0, 0.21, 0.39, 0.56];
 
@@ -778,7 +778,7 @@ export default function App() {
                 </motion.div>
               </AnimatePresence>
               <p className="text-[9px] mt-3 pt-2 leading-snug" style={{ color: "#98A2B3", opacity: 0.75, borderTop: "1px solid rgba(152,162,179,0.25)" }}>
-                Vista referencial · datos ilustrativos
+                Ejemplo conceptual de operación · no corresponde a métricas reales
               </p>
             </div>
           </div>
@@ -968,7 +968,7 @@ function SystemMapVisual({ inView }: { inView: boolean }) {
           <p style={{ ...MONO, color: "rgba(255,255,255,0.6)", fontSize: 9, marginTop: 8, letterSpacing: "0.16em" }}>CAPA DE OPERACIÓN Y GOBERNANZA</p>
         </motion.div>
       </div>
-      <p style={{ fontSize: 9, color: B.textMuted, ...MONO, marginTop: 14, opacity: 0.75 }}>Vista referencial · datos ilustrativos</p>
+      <p style={{ fontSize: 9, color: B.textMuted, ...MONO, marginTop: 14, opacity: 0.75 }}>Representación conceptual · datos ilustrativos</p>
     </div>
   );
 }
@@ -1006,7 +1006,7 @@ function SectionQueEs() {
               <motion.p className="text-[17px] leading-relaxed" style={{ color: B.textSub, maxWidth: 440 }}
                 initial={{ opacity: 0, y: 12 }} animate={inV ? { opacity: 1, y: 0 } : { opacity: 0, y: 12 }}
                 transition={{ duration: 0.78, delay: 0.28, ease }}>
-                KRNL conecta agentes, modelos, datos y sistemas en una misma capa, para operar IA con reglas, evidencia y supervisión humana.
+                KRNL propone una capa para conectar agentes, modelos, datos y sistemas, y operar IA con reglas, evidencia y supervisión humana.
               </motion.p>
             </div>
             <motion.div
@@ -1315,7 +1315,7 @@ function SectionParaQuien() {
   const steps = [
     { n: "01", Icon: Search,      title: "Detecta una necesidad", desc: "Un equipo identifica una tarea, consulta o proceso repetitivo." },
     { n: "02", Icon: UserCog,     title: "Configura un agente",   desc: "Define qué debe hacer, con qué contexto y bajo qué reglas." },
-    { n: "03", Icon: ShieldCheck, title: "Opera con gobierno",    desc: "KRNL aplica trazabilidad, políticas, auditoría y supervisión humana." },
+    { n: "03", Icon: ShieldCheck, title: "Opera con gobierno",    desc: "La operación puede aplicar trazabilidad, políticas, auditoría y supervisión humana." },
   ];
   const roles = [
     { Icon: User,       label: "Usuarios de negocio" },
@@ -1775,12 +1775,12 @@ function SectionMarcoRegulatorio() {
             style={{ background: `radial-gradient(circle, ${B.magentaSoft} 0%, transparent 70%)`, opacity: 0.6 }} />
           <div className="absolute -bottom-20 right-1/4 w-56 h-56 rounded-full pointer-events-none"
             style={{ background: `radial-gradient(circle, ${B.purpleSoft} 0%, transparent 70%)`, opacity: 0.5 }} />
-          <svg className="absolute right-0 top-0 h-full pointer-events-none hidden md:block" width="360" height="100%"
-            viewBox="0 0 360 400" fill="none" preserveAspectRatio="xMidYMid slice" aria-hidden="true" style={{ opacity: 0.4 }}>
-            <path d="M40 0 C 140 90, 60 180, 180 260 S 340 340, 320 400" stroke={B.purple} strokeWidth="1" strokeDasharray="2 6" />
-            <path d="M120 -20 C 220 100, 140 200, 260 280" stroke={B.magenta} strokeWidth="1" strokeDasharray="2 6" />
-            <circle cx="180" cy="260" r="2.5" fill={B.purple} opacity="0.5" />
-            <circle cx="260" cy="280" r="2" fill={B.magenta} opacity="0.5" />
+          <svg className="absolute right-0 top-0 h-full pointer-events-none hidden lg:block" width="180" height="100%"
+            viewBox="0 0 180 400" fill="none" preserveAspectRatio="xMidYMid slice" aria-hidden="true" style={{ opacity: 0.4 }}>
+            <path d="M20 0 C 90 90, 40 180, 110 260 S 170 340, 150 400" stroke={B.purple} strokeWidth="1" strokeDasharray="2 6" />
+            <path d="M60 -20 C 120 100, 70 200, 140 280" stroke={B.magenta} strokeWidth="1" strokeDasharray="2 6" />
+            <circle cx="110" cy="260" r="2.5" fill={B.purple} opacity="0.5" />
+            <circle cx="140" cy="280" r="2" fill={B.magenta} opacity="0.5" />
           </svg>
 
           <div className="relative z-10 p-6 md:p-10 lg:p-12">
@@ -1797,7 +1797,10 @@ function SectionMarcoRegulatorio() {
                     style={{ inset: -6, border: `1px solid ${B.purple}30` }}
                     animate={{ scale: [1, 1.05, 1], opacity: [0.55, 0.2, 0.55] }}
                     transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }} />
-                  <div className="absolute rounded-full pointer-events-none" style={{ inset: 4, border: `1px solid ${B.magenta}22` }} />
+                  <motion.div className="absolute rounded-full pointer-events-none"
+                    style={{ inset: 4, border: `1px dashed ${B.magenta}35` }}
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 24, repeat: Infinity, ease: "linear" }} />
                   <div className="relative w-16 h-16 rounded-2xl flex items-center justify-center"
                     style={{ background: `linear-gradient(135deg, ${B.purpleSoft}, ${B.magentaSoft})`, border: `1px solid ${B.purple}30`, boxShadow: `0 10px 28px ${B.purple}22, inset 0 1px 0 rgba(255,255,255,0.85)` }}>
                     <ShieldCheck className="w-8 h-8 home-icon-gradient" strokeWidth={1.6} />
@@ -1808,7 +1811,7 @@ function SectionMarcoRegulatorio() {
               {/* ── Content column ── */}
               <div className="flex-1 min-w-0">
                 <SectionMarker label="Nuevo estándar de datos" />
-                <h3 className="font-[800] leading-[1.15] mt-3 mb-4" style={{ fontSize: "clamp(24px, 2.6vw, 32px)", color: B.text, maxWidth: 640 }}>
+                <h3 className="font-[800] leading-[1.15] mt-3 mb-4" style={{ fontSize: "clamp(24px, 2.6vw, 32px)", color: B.text, maxWidth: 760 }}>
                   Chile eleva el estándar de protección de datos personales.
                 </h3>
 
@@ -1824,7 +1827,7 @@ function SectionMarcoRegulatorio() {
                 </div>
 
                 {/* Descripción — fecha destacada inline */}
-                <p className="text-[15px] leading-relaxed mb-6" style={{ color: B.textSub, maxWidth: 620 }}>
+                <p className="text-[15px] leading-relaxed mb-6" style={{ color: B.textSub, maxWidth: 760 }}>
                   La Ley 21.719 entra en vigencia el{" "}
                   <span style={{ color: B.magenta, fontWeight: 700 }}>1 de diciembre de 2026</span>{" "}
                   y establece nuevas exigencias sobre el tratamiento de datos personales en Chile. KRNL apoya el gobierno de la IA empresarial —centralizando agentes, modelos y datos bajo políticas, trazabilidad y control— y ayuda a las organizaciones a prepararse para este nuevo estándar.
@@ -1847,7 +1850,7 @@ function SectionMarcoRegulatorio() {
                 {/* Disclaimer */}
                 <div className="flex items-start gap-2 pt-4" style={{ borderTop: `1px solid ${B.purple}18` }}>
                   <ShieldCheck className="w-4 h-4 shrink-0 mt-0.5" style={{ color: B.textMuted }} strokeWidth={1.75} />
-                  <p className="text-[12px] leading-relaxed" style={{ color: B.textMuted, maxWidth: 620 }}>
+                  <p className="text-[12px] leading-relaxed" style={{ color: B.textMuted, maxWidth: 760 }}>
                     KRNL es una capa de gobierno operativo; el cumplimiento normativo específico depende de la implementación y del asesoramiento legal de cada organización.
                   </p>
                 </div>
